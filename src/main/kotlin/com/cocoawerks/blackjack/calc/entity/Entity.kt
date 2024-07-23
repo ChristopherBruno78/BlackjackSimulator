@@ -24,6 +24,12 @@ abstract class Entity(val name: String, val strategy: Strategy) {
             return hands.size
         }
 
+
+    internal fun log(event: Loggable) {
+        logger?.log(event)
+    }
+
+
     /** All the entity's hands, including those create by splitting */
     val allHands: List<Hand>
         get() {
@@ -34,10 +40,6 @@ abstract class Entity(val name: String, val strategy: Strategy) {
             return all
         }
 
-
-    internal fun log(event: Event) {
-        logger?.log(event)
-    }
 
     private fun terminalHands(hand: Hand): List<Hand> {
         val h = ArrayList<Hand>()

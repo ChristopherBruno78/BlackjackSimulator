@@ -4,13 +4,15 @@ import com.cocoawerks.blackjack.calc.entity.Entity
 
 class Hand(val wager: Double = 0.0) {
     val cards: MutableList<Card> = ArrayList()
-    val splits: MutableList<Hand> = ArrayList()
+
 
     var isDouble: Boolean = false
     var isSurrendered: Boolean = false
     var isWin: Boolean = false
     var isPush: Boolean = false
-    var timesSplit: Int = 0
+
+    var rootHand:Hand = this //for split hands
+    val splits:MutableList<Hand> = ArrayList()
 
     var owner: Entity? = null
 
@@ -18,10 +20,6 @@ class Hand(val wager: Double = 0.0) {
         if (card != null) {
             cards.add(card)
         }
-    }
-
-    fun addSplit(hand: Hand) {
-        splits.add(hand)
     }
 
     fun cardAt(index: Int): Card? {
@@ -78,12 +76,27 @@ class Hand(val wager: Double = 0.0) {
 
     val isBlackjack: Boolean
         get() {
-            return numberOfCards == 2 && value() == 21
+            return !isFromSplit && numberOfCards == 2 && value() == 21
         }
 
     val isBusted: Boolean
         get() {
             return value() > 21
+        }
+
+    val isSplittable:Boolean
+        get() {
+            return isPair && splits.isEmpty()
+        }
+
+    val isFromSplit:Boolean
+        get() {
+            return rootHand != this
+        }
+
+    val isFromSplitAces:Boolean
+        get() {
+            return isFromSplit && (cardAt(0)?.rank == Rank.Ace)
         }
 
     val finalWager: Double
@@ -97,6 +110,19 @@ class Hand(val wager: Double = 0.0) {
     val numberOfCards: Int
         get() {
             return cards.size
+        }
+
+    //number of hands from splits
+    val numberOfHands:Int
+        get() {
+            if(splits.isEmpty()) {
+                return 1
+            }
+            var count = 0
+            for(split in splits) {
+                count += split.numberOfHands
+            }
+            return count
         }
 
     val hash: HandHash
@@ -117,7 +143,7 @@ class Hand(val wager: Double = 0.0) {
         if (isBlackjack) {
             str += " (Blackjack!)"
         } else {
-            str += " (${if (isSoft) "soft " else ""}${this.value()})"
+
         }
 
         return str

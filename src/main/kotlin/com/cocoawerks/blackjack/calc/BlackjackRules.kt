@@ -1,17 +1,17 @@
 package com.cocoawerks.blackjack.calc
 
 import com.cocoawerks.blackjack.calc.cards.Hand
-import com.cocoawerks.blackjack.calc.cards.Rank
 
 data class BlackjackRules(
-    var numberOfDecks: Int = 6,
+    var numberOfDecks: Int = 1,
     var dealerHitsSoft17: Boolean = true,
     var blackjackPayoff: Double = 1.5,
-    var deckPenetration: Double = 0.75,
-    var surrenderIsAllowed: Boolean = false,
-    var doubleAfterSplitAllowed: Boolean = true,
-    var numberOfSplitsAllowed: Int = 2,
-    var acesSplitOnce: Boolean = true,
+    var deckPenetration: Double = 0.5,
+    var canLateSurrender: Boolean = false,
+    var canDoubleAfterSplit: Boolean = true,
+    var splitToThisManyHands: Int = 4,
+    var canResplitAces: Boolean = true,
+    var splitAcesReceiveOneCard: Boolean = true,
     var doublesRestrictedToHardTotals: Array<Int> = emptyArray(),
     var europeanNoHoleCard: Boolean = false
 ) {
@@ -20,33 +20,39 @@ data class BlackjackRules(
         fun defaultRules() = BlackjackRules()
     }
 
-    fun isSurrenderAllowed(hand: Hand): Boolean {
-        return hand.numberOfCards == 2 && surrenderIsAllowed
+    fun canSurrender(hand: Hand): Boolean {
+        return hand.numberOfCards == 2 && canLateSurrender
     }
 
-    fun isSplitAllowed(hand: Hand): Boolean {
-        if (!hand.isPair) {
+    fun canSplit(hand: Hand): Boolean {
+
+        if (!hand.isSplittable) {
             return false
         }
-        val numberOfTimesSplit = hand.timesSplit
-        if (hand.cardAt(0)?.rank == Rank.Ace) {
-            if (numberOfTimesSplit > 1 && acesSplitOnce) {
-                return false
-            }
+
+        if (hand.isFromSplitAces && canResplitAces) { //spitting aces
+           return false
         }
-        if (numberOfTimesSplit >= numberOfSplitsAllowed) {
+
+        if(hand.rootHand.numberOfHands >= splitToThisManyHands) {
             return false
         }
         return true
     }
 
-    fun isDoubleAllowed(hand: Hand): Boolean {
+    fun canDouble(hand: Hand): Boolean {
         if (hand.numberOfCards != 2) {
             return false
         }
 
-        if (!doubleAfterSplitAllowed && hand.timesSplit > 0) {
+        val rootHand = hand.rootHand
+
+        if (!canDoubleAfterSplit && rootHand.numberOfHands > 1) {
             return false
+        }
+
+        if (hand.isFromSplitAces) { //split aces
+            return !splitAcesReceiveOneCard
         }
 
         if (doublesRestrictedToHardTotals.size > 0) {
@@ -54,4 +60,9 @@ data class BlackjackRules(
         }
         return true
     }
+
+    fun canPlay(hand:Hand):Boolean {
+       return !(hand.isFromSplitAces && splitAcesReceiveOneCard)
+    }
+
 }

@@ -11,9 +11,9 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
     private val _dealer: Dealer = Dealer(rules)
 
     var logger:Logger? = null
+    var roundsPlayed:Int = 0
 
     init {
-        _dealer.shuffle()
         if( log ) {
             logger = Logger()
             dealer.logger = logger
@@ -31,7 +31,7 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
         player.logger = logger
     }
 
-    private fun log(event: Event) {
+    private fun log(event: Loggable) {
         logger?.log(event)
     }
 
@@ -101,6 +101,7 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
     }
 
     private fun evaluateRound() {
+        log(HandChangedEvent(stats = _dealer.stats.copy(), hand = _dealer.dealerHand!!))
         val madeHands = ArrayList<Hand>()
         for (player in _players) {
             val hands = player.allHands
@@ -118,7 +119,6 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
         }
 
         if (madeHands.size > 0) {
-            log(HandChangedEvent(stats = _dealer.stats.copy(), hand = _dealer.dealerHand!!))
             _dealer.playHand()
             val dealerTotal = _dealer.dealerHand!!.value()
             if (dealerTotal > 21) { // dealer busts
@@ -157,8 +157,16 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
     }
 
     fun playRound() {
-        logger?.logNewRound()
         clear()
+
+        if(roundsPlayed == 0) {
+            _dealer.shuffle()
+        }
+        else {
+            _dealer.shuffleIfNeeded(rules.deckPenetration)
+        }
+
+        logger?.logNewRound()
         dealerTakeBets()
         dealInitialCards()
         if(!rules.europeanNoHoleCard) {
@@ -175,8 +183,8 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
                 evaluateRound()
             }
         }
-
-        _dealer.shuffleIfNeeded(rules.deckPenetration)
+        roundsPlayed += 1
+        logger?.logEndRound()
     }
 
     fun printLog() {

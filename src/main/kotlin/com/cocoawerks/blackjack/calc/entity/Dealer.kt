@@ -8,12 +8,14 @@ import com.cocoawerks.blackjack.calc.cards.Hand
 import com.cocoawerks.blackjack.calc.log.HandBustsEvent
 import com.cocoawerks.blackjack.calc.log.HandChangedEvent
 import com.cocoawerks.blackjack.calc.log.PlayActionEvent
+import com.cocoawerks.blackjack.calc.log.ShuffleEvent
 import com.cocoawerks.blackjack.calc.strategy.Action
 import com.cocoawerks.blackjack.calc.strategy.DealerStrategy
 import com.cocoawerks.blackjack.calc.strategy.HandState
 
 class Dealer(val rules: BlackjackRules) :
     Entity(name = "Dealer", strategy = DealerStrategy(hitSoft17 = rules.dealerHitsSoft17)) {
+
     val deck = DeckShoe(numberOfDecks = rules.numberOfDecks)
     var dealerHand: Hand? = null
 
@@ -27,7 +29,7 @@ class Dealer(val rules: BlackjackRules) :
     }
 
     fun shuffle() {
-
+        log(ShuffleEvent())
         deck.shuffle()
     }
 

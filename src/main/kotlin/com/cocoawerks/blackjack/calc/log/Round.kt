@@ -1,22 +1,23 @@
 package com.cocoawerks.blackjack.calc.log
 
-class Round(val index:Int) {
-    val events:MutableList<Event> = ArrayList()
+class Round(val index:Int) : Loggable {
+    val events:MutableList<Loggable> = ArrayList()
 
     init {
         events.add(NewRoundEvent(index))
     }
 
-    fun addEvent(event:Event) {
+    fun addEvent(event:Loggable) {
         events.add(event)
     }
 
-    override fun toString(): String {
-        var str = ""
-        for(event in events) {
-            str += event.description
-            str += "\n"
+    override val description: String
+        get() {
+            var str = ""
+            for(event in events) {
+                str += event.description
+                str += "\n"
+            }
+            return str
         }
-        return str
-    }
 }

@@ -5,59 +5,59 @@ import com.cocoawerks.blackjack.calc.cards.Hand
 import com.cocoawerks.blackjack.calc.entity.Stats
 import com.cocoawerks.blackjack.calc.strategy.Action
 
-interface Event {
-    val description:String
-}
-
-class ShuffleEvent : Event {
+class ShuffleEvent : Loggable {
     override val description:String
-        get() = "Shuffling."
+        get() = "Dealer Shuffles."
 }
 
-class DealingCardsEvent : Event {
+class DealingCardsEvent : Loggable {
     override val description:String = "Dealing cards..."
 }
 
-class NewRoundEvent(val index:Int): Event {
+class NewRoundEvent(val index:Int): Loggable {
     override val description:String = "Round ${index}"
 }
 
-class WinEvent(val stats: Stats) : Event {
+class EndOfRoundEvent(): Loggable  {
+    override val description:String = "------------------------------"
+}
+
+class WinEvent(val stats: Stats) : Loggable {
     override val description:String = "${stats.name} wins. Bankroll: ${stats.bankroll}."
 }
 
-class LossEvent(val stats:Stats): Event {
+class LossEvent(val stats:Stats): Loggable {
     override val description:String = "${stats.name} loses. Bankroll: ${stats.bankroll}."
 }
 
-class PushEvent(val stats:Stats): Event {
+class PushEvent(val stats:Stats): Loggable {
     override val description:String = "${stats.name} pushed. Bankroll: ${stats.bankroll}."
 }
 
-class SurrenderEvent(val stats:Stats) : Event {
+class SurrenderEvent(val stats:Stats) : Loggable {
     override val description:String = "${stats.name} surrenders. Bankroll: ${stats.bankroll}."
 }
 
-class HasABlackjackEvent(val stats:Stats) : Event {
+class HasABlackjackEvent(val stats:Stats) : Loggable {
     override val description:String = "${stats.name} has blackjack!"
 }
 
-class BetPlacedEvent(val stats:Stats, val wager:Double): Event {
+class BetPlacedEvent(val stats:Stats, val wager:Double): Loggable {
     override val description:String = "${stats.name} bets ${wager}."
 }
 
-class HandBustsEvent(val stats:Stats): Event {
+class HandBustsEvent(val stats:Stats): Loggable {
     override val description:String = "${stats.name} busts."
 }
 
-class HandChangedEvent(val stats:Stats, val hand:Hand): Event {
+class HandChangedEvent(val stats:Stats, val hand:Hand): Loggable {
     override val description:String = "${stats.name} hand: ${hand}"
 }
 
-class PlayActionEvent(val stats:Stats, val action:Action): Event {
+class PlayActionEvent(val stats:Stats, val action:Action): Loggable {
     override val description:String = "${stats.name}: ${action.name.uppercase()}."
 }
 
-class DealerUpCardEvent(val upCard: Card): Event {
+class DealerUpCardEvent(val upCard: Card): Loggable {
     override val description:String = "Dealer has upcard: ${upCard}"
 }

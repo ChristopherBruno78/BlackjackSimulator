@@ -10,8 +10,6 @@ import com.cocoawerks.blackjack.calc.strategy.Strategy
 
 class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
 
-    // var currentWager:Double = 0.0
-
     fun bet() {
         val wager = strategy.getWagerAction(0)
         val spots = strategy.getNumberOfBettingSpotsAction(0)
@@ -29,13 +27,14 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
             hand1.addCard(hand.cardAt(0))
             hand1.addCard(card1)
             hand1.owner = this
-            hand1.timesSplit = hand1.timesSplit + 1
 
             val hand2 = Hand(wager = hand.wager)
             hand2.addCard(hand.cardAt(1))
             hand2.addCard(card2)
             hand2.owner = this
-            hand2.timesSplit = hand2.timesSplit + 1
+
+            hand1.rootHand = hand.rootHand
+            hand2.rootHand = hand.rootHand
 
             hand.splits.add(hand1)
             hand.splits.add(hand2)
@@ -81,6 +80,7 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
     }
 
     private fun playSplit(hand: Hand, forGame: BlackjackGame): Action? {
+        if(!hand.isSplittable) return null
         log(PlayActionEvent(stats = stats.copy(), action = Action.Split))
         val splitHands = splitHand(hand, forGame.dealer.dealCard(), forGame.dealer.dealCard())
         if (splitHands.size == 2) {
@@ -102,16 +102,21 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
         }
 
         val rules = forGame.rules
+        if(!rules.canPlay(hand)) {
+            log(PlayActionEvent(stats = stats.copy(), action = Action.Stand))
+            return Action.Stand
+        }
+
         val action = makeDecision(HandState(hand.hash, upCard = forGame.dealer.upCard?.rank))
         if (action == Action.SurrenderOrHit) {
-            if (rules.isSurrenderAllowed(hand)) {
+            if (rules.canSurrender(hand)) {
                 processSurrender(hand)
                 return Action.Surrender
             } else {
                 return playHit(hand, forGame)
             }
         } else if (action == Action.SurrenderOrSplit) {
-            if (rules.isSurrenderAllowed(hand)) {
+            if (rules.canSurrender(hand)) {
                 processSurrender(hand)
                 return Action.Surrender
             } else if (hand.isPair) {
@@ -119,30 +124,30 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
                 return Action.Split
             }
         } else if (action == Action.SurrenderOrStand) {
-            if (rules.isSurrenderAllowed(hand)) {
+            if (rules.canSurrender(hand)) {
                 processSurrender(hand)
                 return Action.Surrender
             }
         } else if (action == Action.Hit) {
             return playHit(hand, forGame)
         } else if (action == Action.DoubleOrHit) {
-            if (rules.isDoubleAllowed(hand)) {
+            if (rules.canDouble(hand)) {
                 return playDouble(hand, forGame)
             } else {
                 return playHit(hand, forGame)
             }
         } else if (action == Action.DoubleOrStand) {
-            if (rules.isDoubleAllowed(hand)) {
+            if (rules.canDouble(hand)) {
                 return playDouble(hand, forGame)
             }
         } else if (action == Action.SplitOrHit) {
-            if (rules.isSplitAllowed(hand)) {
+            if (rules.canSplit(hand)) {
                 return playSplit(hand, forGame)
             } else {
                 return playHit(hand, forGame)
             }
         } else if (action == Action.SplitOrStand) {
-            if (rules.isSplitAllowed(hand)) {
+            if (rules.canSplit(hand)) {
                 return playSplit(hand, forGame)
             }
         }

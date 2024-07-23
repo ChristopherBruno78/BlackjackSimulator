@@ -143,9 +143,9 @@ class BasicStrategy4PlusDecks : Strategy() {
 
     private fun initPairs() {
 
-        // 2 (A-A)
+        // 2/12 (A-A)
         Rank.entries.forEach { rank ->
-            setPlayAction(Action.SplitOrHit, HandState(pair(2), upCard = rank))
+            setPlayAction(Action.SplitOrHit, HandState(pair(12, aces = true), upCard = rank))
         }
 
         // 4

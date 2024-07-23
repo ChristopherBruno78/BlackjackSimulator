@@ -33,4 +33,13 @@ class DeckShoe(val numberOfDecks: Int = 1) {
         get() {
             return (1.0 - numberOfCardsRemaining / (numberOfDecks * 52.0))
         }
+
+    override fun toString(): String {
+        var str = ""
+        for(card in cards) {
+            str += card.toString()
+            str += "\n"
+        }
+        return str
+    }
 }

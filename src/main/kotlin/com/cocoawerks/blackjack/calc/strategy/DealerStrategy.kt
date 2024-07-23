@@ -15,7 +15,7 @@ class DealerStrategy(val hitSoft17: Boolean = false) : Strategy() {
             setPlayAction(Action.Stand, HandState(hard(total)))
         }
 
-        for (total in 12..16) {
+        for (total in 13..16) {
             setPlayAction(Action.Hit, HandState(soft(total)))
         }
 
@@ -26,7 +26,7 @@ class DealerStrategy(val hitSoft17: Boolean = false) : Strategy() {
         }
 
         //pairs
-        for(total in 2..20) {
+        for(total in 4..20) {
             if(total % 2 == 0){
                 if(total < 17) {
                     setPlayAction(Action.Hit, HandState(pair(total)))
@@ -36,5 +36,9 @@ class DealerStrategy(val hitSoft17: Boolean = false) : Strategy() {
                 }
             }
         }
+
+        //pair of aces
+        setPlayAction(Action.Hit, HandState(pair(12, aces = true)))
+
     }
 }
