@@ -1,44 +1,32 @@
 package com.cocoawerks.blackjack.calc.strategy
 
+import com.cocoawerks.blackjack.calc.BlackjackRules
 import com.cocoawerks.blackjack.calc.cards.hard
 import com.cocoawerks.blackjack.calc.cards.pair
 import com.cocoawerks.blackjack.calc.cards.soft
+import com.cocoawerks.blackjack.calc.strategy.tables.DealerStrategyTable
 
-class DealerStrategy(val hitSoft17: Boolean = false) : Strategy() {
+class DealerStrategy(val rules: BlackjackRules) : Strategy {
+
+    private val playActions: MutableMap<HandState, Action> = HashMap()
 
     init {
-        for (total in 5..16) {
-            setPlayAction(Action.Hit, HandState(hard(total)))
-        }
-
-        for (total in 17..21) {
-            setPlayAction(Action.Stand, HandState(hard(total)))
-        }
-
-        for (total in 13..16) {
-            setPlayAction(Action.Hit, HandState(soft(total)))
-        }
-
-        setPlayAction(if (hitSoft17) Action.Hit else Action.Stand, HandState(soft(17)))
-
-        for (total in 18..21) {
-            setPlayAction(Action.Stand, HandState(soft(total)))
-        }
-
-        //pairs
-        for(total in 4..20) {
-            if(total % 2 == 0){
-                if(total < 17) {
-                    setPlayAction(Action.Hit, HandState(pair(total)))
-                }
-                else {
-                    setPlayAction(Action.Stand, HandState(pair(total)))
-                }
-            }
-        }
-
-        //pair of aces
-        setPlayAction(Action.Hit, HandState(pair(12, aces = true)))
-
+        DealerStrategyTable(this)
     }
+
+    override fun getPlayAction(state: HandState): Action {
+        return playActions[state]!!
+    }
+
+    override fun setPlayAction(action: Action, forState: HandState) {
+        playActions[forState] = action
+    }
+
+    override fun getBet(): Double { return 0.0 }
+
+    override fun getNumberOfBettingSpots():Int { return 0 }
+
+    override fun reset() {  }
+
+    override fun willTakeInsurance(): Boolean { return false }
 }

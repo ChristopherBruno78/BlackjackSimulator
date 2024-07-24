@@ -13,15 +13,20 @@ import com.cocoawerks.blackjack.calc.strategy.Action
 import com.cocoawerks.blackjack.calc.strategy.DealerStrategy
 import com.cocoawerks.blackjack.calc.strategy.HandState
 
-class Dealer(val rules: BlackjackRules) :
-    Entity(name = "Dealer", strategy = DealerStrategy(hitSoft17 = rules.dealerHitsSoft17)) {
+class Dealer(val game:BlackjackGame) :
+    Entity(name = "Dealer", strategy = DealerStrategy(game.rules)) {
 
-    val deck = DeckShoe(numberOfDecks = rules.numberOfDecks)
+    val deck = DeckShoe(numberOfDecks = game.rules.numberOfDecks)
     var dealerHand: Hand? = null
 
     val upCard: Card?
         get() {
             return dealerHand?.cardAt(0)
+        }
+
+    val holeCard:Card?
+        get() {
+            return dealerHand?.cardAt(1)
         }
 
     fun dealCard(): Card? {
@@ -33,10 +38,12 @@ class Dealer(val rules: BlackjackRules) :
         deck.shuffle()
     }
 
-    fun shuffleIfNeeded(pen: Double) {
+    fun shuffleIfNeeded(pen: Double): Boolean {
         if (deck.pen > pen) {
             shuffle()
+            return true
         }
+        return false
     }
 
     fun startHand() {
@@ -57,7 +64,7 @@ class Dealer(val rules: BlackjackRules) :
     override fun playHand(hand: Hand, forGame: BlackjackGame?): Action? {
         if (makeDecision(HandState(dealerHand!!.hash)) == Action.Hit) {
             log(PlayActionEvent(stats = stats.copy(), action = Action.Hit))
-            hand.addCard(dealCard())
+            hand.addCard(game.takeVisibleCardFromDealer())
             log(HandChangedEvent(stats = stats.copy(), hand = hand))
             if (dealerHand!!.isBusted) {
                 log(HandBustsEvent(stats = stats.copy()))

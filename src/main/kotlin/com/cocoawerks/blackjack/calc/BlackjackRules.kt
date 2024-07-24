@@ -3,14 +3,14 @@ package com.cocoawerks.blackjack.calc
 import com.cocoawerks.blackjack.calc.cards.Hand
 
 data class BlackjackRules(
-    var numberOfDecks: Int = 1,
+    var numberOfDecks: Int = 6,
     var dealerHitsSoft17: Boolean = true,
     var blackjackPayoff: Double = 1.5,
-    var deckPenetration: Double = 0.5,
+    var deckPenetration: Double = 0.75,
     var canLateSurrender: Boolean = false,
     var canDoubleAfterSplit: Boolean = true,
     var splitToThisManyHands: Int = 4,
-    var canResplitAces: Boolean = true,
+    var canResplitAces: Boolean = false,
     var splitAcesReceiveOneCard: Boolean = true,
     var doublesRestrictedToHardTotals: Array<Int> = emptyArray(),
     var europeanNoHoleCard: Boolean = false

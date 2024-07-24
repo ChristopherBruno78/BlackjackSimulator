@@ -5,20 +5,27 @@ import com.cocoawerks.blackjack.calc.cards.Card
 import com.cocoawerks.blackjack.calc.cards.Hand
 import com.cocoawerks.blackjack.calc.log.*
 import com.cocoawerks.blackjack.calc.strategy.Action
+import com.cocoawerks.blackjack.calc.strategy.CountingStrategy
 import com.cocoawerks.blackjack.calc.strategy.HandState
 import com.cocoawerks.blackjack.calc.strategy.Strategy
 
-class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
+open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
 
     fun bet() {
-        val wager = strategy.getWagerAction(0)
-        val spots = strategy.getNumberOfBettingSpotsAction(0)
-        for (i in 1..spots) {
-            val hand = Hand(wager = wager)
-            hand.owner = this
-            hands.add(hand)
-            log(BetPlacedEvent(stats = stats.copy(), wager = wager))
+        val wager = strategy.getBet()
+        val spots = strategy.getNumberOfBettingSpots()
+        if (wager > 0) {
+            for (i in 1..spots) {
+                val hand = Hand(wager = wager)
+                hand.owner = this
+                hands.add(hand)
+                log(BetPlacedEvent(stats = stats.copy(), wager = wager))
+            }
         }
+        else {
+            log(BetPlacedEvent(stats = stats.copy(), wager = 0.0))
+        }
+        stats.bets.add(wager)
     }
 
     fun splitHand(hand: Hand, card1: Card?, card2: Card?): Array<Hand> {
@@ -46,25 +53,29 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
 
     private fun playHit(hand: Hand, forGame: BlackjackGame): Action? {
         log(PlayActionEvent(stats = stats.copy(), action = Action.Hit))
-        hand.addCard(forGame.dealer.dealCard())
+        hand.addCard(forGame.takeVisibleCardFromDealer())
         log(HandChangedEvent(stats = stats.copy(), hand = hand))
-        if (handleIfBusted(hand)) {
+        if (handleIfBusted(hand, forGame)) {
             return Action.Stand
         }
         return playHand(hand, forGame)
     }
 
-    private fun handleIfBusted(hand: Hand): Boolean {
+    private fun handleIfBusted(hand: Hand, game:BlackjackGame): Boolean {
         if(hand.isBusted) {
             log(HandBustsEvent(stats = stats.copy()))
+            processLoss(hand)
+            game.dealer.processWin(hand)
             return true
         }
         return false
     }
 
-    private fun handleIfBlackjack(hand: Hand): Boolean {
+    private fun handleIfBlackjack(hand: Hand, game:BlackjackGame): Boolean {
         if (hand.isBlackjack) {
             log(HasABlackjackEvent(stats = stats.copy()))
+            processWin(hand, game.rules)
+            game.dealer.processLoss(hand, game.rules)
             return true
         }
         return false
@@ -73,16 +84,16 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
     private fun playDouble(hand: Hand, forGame: BlackjackGame): Action {
         log(PlayActionEvent(stats = stats.copy(), action = Action.Double))
         hand.isDouble = true
-        hand.addCard(forGame.dealer.dealCard())
+        hand.addCard(forGame.takeVisibleCardFromDealer())
         log(HandChangedEvent(stats = stats.copy(), hand = hand))
-        handleIfBusted(hand)
+        handleIfBusted(hand, forGame)
         return Action.Double
     }
 
     private fun playSplit(hand: Hand, forGame: BlackjackGame): Action? {
         if(!hand.isSplittable) return null
         log(PlayActionEvent(stats = stats.copy(), action = Action.Split))
-        val splitHands = splitHand(hand, forGame.dealer.dealCard(), forGame.dealer.dealCard())
+        val splitHands = splitHand(hand, forGame.takeVisibleCardFromDealer(), forGame.takeVisibleCardFromDealer())
         if (splitHands.size == 2) {
             log(HandChangedEvent(stats = stats.copy(), hand = splitHands[0]))
             playHand(splitHands[0], forGame)
@@ -93,11 +104,24 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
         return null
     }
 
+    fun observeCard(card: Card?) {
+        if(strategy is CountingStrategy) {
+            strategy.updateRunningCount(card!!)
+        }
+    }
+
+    open fun observeGame(game:BlackjackGame) { }
+
+    fun insureHand(hand:Hand) {
+        hand.isInsured = true
+        stats.bankroll -= hand.wager/2.0
+    }
+
     override fun playHand(hand: Hand, forGame: BlackjackGame?): Action? {
 
         if (forGame == null) throw RuntimeException("Game is null")
 
-        if (handleIfBlackjack(hand)) {
+        if (handleIfBlackjack(hand, forGame)) {
             return Action.Stand
         }
 
@@ -141,7 +165,7 @@ class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
                 return playDouble(hand, forGame)
             }
         } else if (action == Action.SplitOrHit) {
-            if (rules.canSplit(hand)) {
+            if (rules.canSplit(hand) && rules.canDoubleAfterSplit) {
                 return playSplit(hand, forGame)
             } else {
                 return playHit(hand, forGame)

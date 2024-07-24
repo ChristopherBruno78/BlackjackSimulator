@@ -4,6 +4,7 @@ import com.cocoawerks.blackjack.calc.BlackjackGame
 import com.cocoawerks.blackjack.calc.BlackjackRules
 import com.cocoawerks.blackjack.calc.cards.Hand
 import com.cocoawerks.blackjack.calc.log.*
+import com.cocoawerks.blackjack.calc.stats.PlayerStats
 import com.cocoawerks.blackjack.calc.strategy.Action
 import com.cocoawerks.blackjack.calc.strategy.HandState
 import com.cocoawerks.blackjack.calc.strategy.Strategy
@@ -12,11 +13,11 @@ abstract class Entity(val name: String, val strategy: Strategy) {
 
     var hands: MutableList<Hand> = ArrayList()
 
-    private val _stats: Stats = Stats(name)
+    private val _stats: PlayerStats = PlayerStats(name)
 
     var logger:Logger? = null
 
-    val stats: Stats
+    val stats: PlayerStats
         get() = _stats
 
     val numberOfHands: Int
@@ -54,7 +55,6 @@ abstract class Entity(val name: String, val strategy: Strategy) {
     }
 
     fun processLoss(hand: Hand, rules: BlackjackRules? = null) {
-        hand.isWin = false
         if (hand.isBlackjack) {
             stats.bankroll -= ((rules?.blackjackPayoff ?: 1.0) * hand.finalWager)
         } else {
@@ -65,7 +65,6 @@ abstract class Entity(val name: String, val strategy: Strategy) {
     }
 
     fun processWin(hand: Hand, rules: BlackjackRules? = null) {
-        hand.isWin = true
         if (hand.isBlackjack) {
             stats.bankroll += ((rules?.blackjackPayoff ?: 1.0) * hand.finalWager)
         } else {
@@ -76,15 +75,11 @@ abstract class Entity(val name: String, val strategy: Strategy) {
     }
 
     fun processPush(hand: Hand) {
-        hand.isPush = true
-        hand.isWin = false
         stats.pushes += 1
         log(PushEvent(stats = stats.copy()))
     }
 
     fun processSurrender(hand: Hand) {
-        hand.isWin = false
-        hand.isSurrendered = true
         stats.surrenders += 1
         stats.bankroll -= 0.5 * hand.finalWager
         log(SurrenderEvent(stats = stats.copy()))

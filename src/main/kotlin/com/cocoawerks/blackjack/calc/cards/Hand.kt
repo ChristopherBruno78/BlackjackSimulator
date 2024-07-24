@@ -5,11 +5,8 @@ import com.cocoawerks.blackjack.calc.entity.Entity
 class Hand(val wager: Double = 0.0) {
     val cards: MutableList<Card> = ArrayList()
 
-
     var isDouble: Boolean = false
-    var isSurrendered: Boolean = false
-    var isWin: Boolean = false
-    var isPush: Boolean = false
+    var isInsured: Boolean = false
 
     var rootHand:Hand = this //for split hands
     val splits:MutableList<Hand> = ArrayList()
@@ -143,7 +140,8 @@ class Hand(val wager: Double = 0.0) {
         if (isBlackjack) {
             str += " (Blackjack!)"
         } else {
-
+            val v = value()
+            str += " (${if(isSoft) "soft " else ""}${v})"
         }
 
         return str
