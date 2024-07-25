@@ -3,6 +3,7 @@ package com.cocoawerks.blackjack.calc.strategy.tables
 import com.cocoawerks.blackjack.calc.cards.Rank
 import com.cocoawerks.blackjack.calc.cards.hard
 import com.cocoawerks.blackjack.calc.cards.pair
+import com.cocoawerks.blackjack.calc.cards.soft
 import com.cocoawerks.blackjack.calc.strategy.Action
 import com.cocoawerks.blackjack.calc.strategy.CountingStrategy
 import com.cocoawerks.blackjack.calc.strategy.HandState
@@ -16,6 +17,7 @@ class IllustriousEighteen(strategy: CountingStrategy) {
         strategy.setDeviation(Action.SplitOrStand, HandState(pair(20), upCard = Rank.Six), atIndex = 4)
         strategy.setDeviation(Action.DoubleOrHit, HandState(hard(10), upCard = Rank.Ten), atIndex = 4)
         strategy.setDeviation(Action.Stand, HandState(hard(12), upCard = Rank.Three), atIndex = 2)
+        strategy.setDeviation(Action.SplitOrStand, HandState(soft(12), upCard = Rank.Two), atIndex = 3)
         strategy.setDeviation(Action.Stand, HandState(hard(12), upCard = Rank.Two), atIndex = 3)
         strategy.setDeviation(Action.DoubleOrHit, HandState(hard(11), upCard = Rank.Ace), atIndex = 1)
         strategy.setDeviation(Action.DoubleOrHit, HandState(hard(9), upCard = Rank.Two), atIndex = 1)
