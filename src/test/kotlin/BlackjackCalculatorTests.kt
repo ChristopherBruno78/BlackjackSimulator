@@ -1,4 +1,3 @@
-
 import com.cocoawerks.blackjack.calc.BlackjackGame
 import com.cocoawerks.blackjack.calc.BlackjackRules
 import com.cocoawerks.blackjack.calc.cards.*
@@ -54,12 +53,8 @@ class BlackjackCalculatorTests {
         hand.addCard(deck.drawCard())
 
         println(hand)
-
-
-        assert(deck.numberOfCardsRemaining == 52*deck.numberOfDecks - 2)
-        assert(deck.pen == (1.0 - (52*deck.numberOfDecks - 2)/(52.0*deck.numberOfDecks)))
-
-
+        assert(deck.numberOfCardsRemaining == 52 * deck.numberOfDecks - 2)
+        assert(deck.pen == (1.0 - (52 * deck.numberOfDecks - 2) / (52.0 * deck.numberOfDecks)))
     }
 
 
@@ -89,11 +84,12 @@ class BlackjackCalculatorTests {
         hand2.addCard(Card(Suit.Heart, Rank.Seven))
         hand2.addCard(Card(suit = Suit.Diamond, Rank.Three))
 
-       val a =  player.strategy.getPlayAction(HandState(hand2.hash, upCard = Rank.Four))
+        val a = player.strategy.getPlayAction(HandState(hand2.hash, upCard = Rank.Four))
 
-       assert(a == Action.DoubleOrHit)
+        assert(a == Action.DoubleOrHit)
 
     }
+
 
     @Test
     fun testGame() {
@@ -102,20 +98,22 @@ class BlackjackCalculatorTests {
         game.addPlayer(player)
 
         val rules = BlackjackRules()
-        val betSpread = BetSpread(hashMapOf(
-            0 to 1.0,
-            1 to 1.0,
-            2 to 1.0,
-            3 to 6.0,
-            4 to 12.0,
-            5 to 24.0,
-            6 to 50.0
-        ))
+        val betSpread = BetSpread(
+            hashMapOf(
+                0 to 1.0,
+                1 to 1.0,
+                2 to 1.0,
+                3 to 6.0,
+                4 to 12.0,
+                5 to 24.0,
+                6 to 50.0
+            )
+        )
 
         val counter = Player(name = "Counter", strategy = HiLoCountingStrategy(betSpread, rules))
         game.addPlayer(counter)
 
-        for(i in 1..1) {
+        for (i in 1..1) {
             game.playRound()
         }
         game.printLog()
@@ -236,26 +234,31 @@ class BlackjackCalculatorTests {
     @Test
     fun testCounter() {
         val rules = BlackjackRules()
-        val betSpread = BetSpread(hashMapOf(
-            0 to 0.0,
-            1 to 0.0,
-             2 to 0.0,
-             3 to 6.0,
-             4 to 12.0,
-             5 to 24.0,
-             6 to 50.0
-        ))
+        val betSpread = BetSpread(
+            hashMapOf(
+                0 to 1.0,
+                1 to 2.0,
+                2 to 3.0,
+                3 to 6.0,
+                4 to 12.0,
+                5 to 18.0
+            )
+        )
 
-        val bankrolls:MutableList<Int> = ArrayList()
-        var lostMoneyCount =  0
-        for(j in 1..100) {
+        val startBank = 1000
+        val bankrolls: MutableList<Int> = ArrayList()
+        var lostMoneyCount = 0
+        for (j in 1..25000) {
             val game = BlackjackGame(rules)
             val counter = Player(name = "ChrisCounter", strategy = HiLoCountingStrategy(betSpread, rules))
             game.addPlayer(counter)
-            for(i in 1..100000) {
+            for (i in 1..1500) {
                 game.playRound()
+                if (counter.stats.bankroll <= -startBank) {
+                    break
+                }
             }
-            if(counter.stats.bankroll < 0) {
+            if (counter.stats.bankroll <= -startBank) {
                 lostMoneyCount += 1
             }
             bankrolls.add(counter.stats.bankroll.toInt())
@@ -264,54 +267,59 @@ class BlackjackCalculatorTests {
         var sum = 0
         var min = Int.MAX_VALUE
         var max = Int.MIN_VALUE
-        for(b in bankrolls){
+        for (b in bankrolls) {
             sum += b
-            if(b < min) {
+            if (b < min) {
                 min = b
             }
             if (b > max) {
                 max = b
             }
         }
-        val mean = sum.toDouble()/(bankrolls.size)
+        val mean = sum.toDouble() / (bankrolls.size)
         println("min = $min")
         println("max = $max")
         println("sum = ${sum}")
         println("average = ${mean}")
 
         var ss = 0.0
-        for(b in bankrolls) {
-            ss += ((b - mean)*(b - mean))
+        for (b in bankrolls) {
+            ss += ((b - mean) * (b - mean))
         }
 
-        val variance = ss/(bankrolls.size - 1)
+        val variance = ss / (bankrolls.size - 1)
         val sqrt = sqrt(variance)
 
         println("stdev = $sqrt")
-        println("$lostMoneyCount lost money")
+        println("$lostMoneyCount were ruined")
 
     }
 
     @Test
     fun testSpeedCountPlayer() {
         val rules = BlackjackRules()
-        val betSpread = BetSpread(hashMapOf(
-            0 to 1.0,
-            11 to 1.0,
-            12 to 2.0,
-            13 to 4.0,
-            14 to 8.0,
-            15 to 16.0,
-            16 to 32.0
-        ))
+        val betSpread = BetSpread(
+            hashMapOf(
+                0 to 1.0,
+                11 to 1.0,
+                12 to 2.0,
+                13 to 4.0,
+                14 to 8.0,
+                15 to 16.0,
+                16 to 32.0
+            )
+        )
 
-        val bankrolls:MutableList<Int> = ArrayList()
-        for(j in 1..50000) {
+        val bankrolls: MutableList<Int> = ArrayList()
+        for (j in 1..50000) {
             val game = BlackjackGame(rules)
             val counter = SpeedCountPlayer(name = "ChrisCounter", betSpread, rules)
             game.addPlayer(counter)
-            for(i in 1..80) {
+            for (i in 1..80) {
                 game.playRound()
+                if (counter.stats.bankroll < -1000) {
+                    break
+                }
             }
             //println("Game $j")
             bankrolls.add(counter.stats.bankroll.toInt())
@@ -320,34 +328,119 @@ class BlackjackCalculatorTests {
         var sum = 0
         var min = Int.MAX_VALUE
         var max = Int.MIN_VALUE
-        for(b in bankrolls){
-             sum += b
-            if(b < min) {
+        for (b in bankrolls) {
+            sum += b
+            if (b < min) {
                 min = b
             }
             if (b > max) {
                 max = b
             }
         }
-        val mean = sum.toDouble()/(bankrolls.size)
+        val mean = sum.toDouble() / (bankrolls.size)
         println("min = $min")
         println("max = $max")
         println("sum = ${sum}")
         println("average = ${mean}")
 
         var ss = 0.0
-        for(b in bankrolls) {
-            ss += ((b - mean)*(b - mean))
+        for (b in bankrolls) {
+            ss += ((b - mean) * (b - mean))
         }
 
-        val variance = ss/(bankrolls.size - 1)
+        val variance = ss / (bankrolls.size - 1)
         val sqrt = sqrt(variance)
 
         println("stdev = $sqrt")
 
     }
 
+    @Test
+    fun testDeviations() {
+        val rules = BlackjackRules()
 
+        val game = BlackjackGame(rules)
+
+        val betSpread = BetSpread(
+            hashMapOf(
+                0 to 1.0,
+                11 to 1.0,
+                12 to 2.0,
+                13 to 4.0,
+                14 to 8.0,
+                15 to 16.0,
+                16 to 32.0
+            )
+        )
+
+        val player = Player("Chris", strategy = HiLoCountingStrategy(betSpread, rules))
+        game.addPlayer(player)
+
+        game.dealer.deck.stackWithCards(
+            Card(Suit.Heart, Rank.Six),
+            Card(Suit.Heart, Rank.Three),
+            Card(Suit.Heart, Rank.Five),
+            Card(Suit.Heart, Rank.Four),
+            Card(Suit.Heart, Rank.Six),
+            Card(Suit.Heart, Rank.Ten),
+            Card(Suit.Heart, Rank.Seven),
+            Card(Suit.Spade, Rank.Ten),
+            Card(Suit.Club, Rank.Nine),
+            Card(Suit.Diamond, Rank.Ten),
+            Card(Suit.Heart, Rank.Nine),
+            Card(Suit.Heart, Rank.Ten),
+            Card(Suit.Heart, Rank.King),
+            Card(Suit.Heart, Rank.Two),
+            Card(Suit.Heart, Rank.Five),
+            Card(Suit.Spade, Rank.Ace),
+            Card(Suit.Heart, Rank.Two),
+            Card(Suit.Heart, Rank.Ace),
+            Card(Suit.Heart, Rank.Four),
+            Card(Suit.Heart, Rank.Two),
+            Card(Suit.Heart, Rank.Five),
+            Card(Suit.Spade, Rank.Ace),
+            Card(Suit.Heart, Rank.Two)
+        )
+
+        for (i in 1..2) {
+            game.playRound(true)
+        }
+
+        game.printLog()
+    }
+
+    @Test
+    fun testENHC() {
+        val rules = BlackjackRules()
+        rules.europeanNoHoleCard = true
+
+        val game = BlackjackGame(rules)
+
+        val player = Player("Chris", strategy = BasicStrategy(rules))
+        game.addPlayer(player)
+
+        game.dealer.deck.stackWithCards(
+            Card(Suit.Club, Rank.King),
+            Card(Suit.Diamond, Rank.Ace),
+            Card(Suit.Heart, Rank.Ace),
+            Card(Suit.Heart, Rank.Five),
+            Card(Suit.Heart, Rank.King),
+            Card(Suit.Heart, Rank.Two),
+            Card(Suit.Heart, Rank.Five),
+            Card(Suit.Spade, Rank.Ace),
+            Card(Suit.Heart, Rank.Two),
+            Card(Suit.Heart, Rank.Ace),
+            Card(Suit.Heart, Rank.Four),
+            Card(Suit.Heart, Rank.Two),
+            Card(Suit.Heart, Rank.Five),
+            Card(Suit.Spade, Rank.Ace),
+            Card(Suit.Heart, Rank.Two)
+        )
+
+        game.playRound(true)
+        game.printLog()
+
+    }
 
 
 }

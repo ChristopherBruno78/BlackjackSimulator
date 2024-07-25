@@ -15,7 +15,7 @@ abstract class Entity(val name: String, val strategy: Strategy) {
 
     private val _stats: PlayerStats = PlayerStats(name)
 
-    var logger:Logger? = null
+    var logger: Logger? = null
 
     val stats: PlayerStats
         get() = _stats

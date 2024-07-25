@@ -79,8 +79,7 @@ class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
                 strategy.setPlayAction(Action.Stand, state)
             } else if ((rank.value() > 6 && rank.value() < 10) || rank.value() == 1) {
                 strategy.setPlayAction(Action.Hit, state)
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.SurrenderOrHit, state)
             }
         }
@@ -92,8 +91,7 @@ class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
                 strategy.setPlayAction(Action.Stand, state)
             } else if ((rank.value() > 6 && rank.value() < 9) || rank.value() == 1) {
                 strategy.setPlayAction(Action.Hit, state)
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.SurrenderOrHit, state)
             }
         }
@@ -103,8 +101,7 @@ class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
             val state = HandState(hard(17), upCard = rank)
             if (rank.value() == 1) {
                 strategy.setPlayAction(Action.SurrenderOrStand, state)
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.Stand, state)
             }
         }
@@ -251,10 +248,9 @@ class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 16
         Rank.entries.forEach { rank ->
-            if(rank == Rank.Ace) {
+            if (rank == Rank.Ace) {
                 strategy.setPlayAction(Action.SurrenderOrSplit, HandState(pair(16), upCard = rank))
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.SplitOrHit, HandState(pair(16), upCard = rank))
             }
         }

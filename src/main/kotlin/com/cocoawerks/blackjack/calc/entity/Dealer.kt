@@ -1,7 +1,6 @@
 package com.cocoawerks.blackjack.calc.entity
 
 import com.cocoawerks.blackjack.calc.BlackjackGame
-import com.cocoawerks.blackjack.calc.BlackjackRules
 import com.cocoawerks.blackjack.calc.cards.Card
 import com.cocoawerks.blackjack.calc.cards.DeckShoe
 import com.cocoawerks.blackjack.calc.cards.Hand
@@ -13,7 +12,7 @@ import com.cocoawerks.blackjack.calc.strategy.Action
 import com.cocoawerks.blackjack.calc.strategy.DealerStrategy
 import com.cocoawerks.blackjack.calc.strategy.HandState
 
-class Dealer(val game:BlackjackGame) :
+class Dealer(val game: BlackjackGame) :
     Entity(name = "Dealer", strategy = DealerStrategy(game.rules)) {
 
     val deck = DeckShoe(numberOfDecks = game.rules.numberOfDecks)
@@ -24,7 +23,7 @@ class Dealer(val game:BlackjackGame) :
             return dealerHand?.cardAt(0)
         }
 
-    val holeCard:Card?
+    val holeCard: Card?
         get() {
             return dealerHand?.cardAt(1)
         }

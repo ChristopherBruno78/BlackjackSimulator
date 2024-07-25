@@ -1,9 +1,6 @@
 package com.cocoawerks.blackjack.calc.strategy
 
 import com.cocoawerks.blackjack.calc.BlackjackRules
-import com.cocoawerks.blackjack.calc.cards.hard
-import com.cocoawerks.blackjack.calc.cards.pair
-import com.cocoawerks.blackjack.calc.cards.soft
 import com.cocoawerks.blackjack.calc.strategy.tables.DealerStrategyTable
 
 class DealerStrategy(val rules: BlackjackRules) : Strategy {
@@ -22,11 +19,17 @@ class DealerStrategy(val rules: BlackjackRules) : Strategy {
         playActions[forState] = action
     }
 
-    override fun getBet(): Double { return 0.0 }
+    override fun getBet(): Double {
+        return 0.0
+    }
 
-    override fun getNumberOfBettingSpots():Int { return 0 }
+    override fun getNumberOfBettingSpots(): Int {
+        return 0
+    }
 
-    override fun reset() {  }
+    override fun reset() {}
 
-    override fun willTakeInsurance(): Boolean { return false }
+    override fun willTakeInsurance(): Boolean {
+        return false
+    }
 }

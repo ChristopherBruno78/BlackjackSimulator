@@ -2,32 +2,31 @@ package com.cocoawerks.blackjack.calc.log
 
 class Logger {
 
-    val log:MutableList<Loggable> = ArrayList()
+    val log: MutableList<Loggable> = ArrayList()
 
-    private var currentRound:Round? = null
+    private var currentRound: Round? = null
     private var outOfRound = true
-    private var roundIndex:Int = 0
+    private var roundIndex: Int = 0
 
     fun logNewRound() {
-        currentRound = Round(roundIndex+1)
+        currentRound = Round(roundIndex + 1)
         roundIndex += 1
         outOfRound = false
     }
 
     fun logEndRound() {
         outOfRound = true
-        if(currentRound != null) {
+        if (currentRound != null) {
             log.add(currentRound!!)
             log.add(EndOfRoundEvent())
         }
         currentRound = null
     }
 
-    fun log(event:Loggable) {
+    fun log(event: Loggable) {
         if (outOfRound) {
             log.add(event)
-        }
-        else {
+        } else {
             currentRound?.addEvent(event)
         }
     }

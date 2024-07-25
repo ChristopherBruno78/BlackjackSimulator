@@ -8,8 +8,8 @@ class Hand(val wager: Double = 0.0) {
     var isDouble: Boolean = false
     var isInsured: Boolean = false
 
-    var rootHand:Hand = this //for split hands
-    val splits:MutableList<Hand> = ArrayList()
+    var rootHand: Hand = this //for split hands
+    val splits: MutableList<Hand> = ArrayList()
 
     var owner: Entity? = null
 
@@ -81,17 +81,17 @@ class Hand(val wager: Double = 0.0) {
             return value() > 21
         }
 
-    val isSplittable:Boolean
+    val isSplittable: Boolean
         get() {
             return isPair && splits.isEmpty()
         }
 
-    val isFromSplit:Boolean
+    val isFromSplit: Boolean
         get() {
             return rootHand != this
         }
 
-    val isFromSplitAces:Boolean
+    val isFromSplitAces: Boolean
         get() {
             return isFromSplit && (cardAt(0)?.rank == Rank.Ace)
         }
@@ -110,13 +110,13 @@ class Hand(val wager: Double = 0.0) {
         }
 
     //number of hands from splits
-    val numberOfHands:Int
+    val numberOfHands: Int
         get() {
-            if(splits.isEmpty()) {
+            if (splits.isEmpty()) {
                 return 1
             }
             var count = 0
-            for(split in splits) {
+            for (split in splits) {
                 count += split.numberOfHands
             }
             return count
@@ -141,7 +141,7 @@ class Hand(val wager: Double = 0.0) {
             str += " (Blackjack!)"
         } else {
             val v = value()
-            str += " (${if(isSoft) "soft " else ""}${v})"
+            str += " (${if (isSoft) "soft " else ""}${v})"
         }
 
         return str

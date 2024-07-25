@@ -24,6 +24,14 @@ class DeckShoe(val numberOfDecks: Int = 1) {
         return null
     }
 
+    fun stackWithCards(vararg cards: Card, shuffle: Boolean = false) {
+        this.cards.clear()
+        this.cards.addAll(0, cards.toList())
+        if (shuffle) {
+            this.cards.shuffle()
+        }
+    }
+
     val numberOfCardsRemaining: Int
         get() {
             return cards.size
@@ -36,7 +44,7 @@ class DeckShoe(val numberOfDecks: Int = 1) {
 
     override fun toString(): String {
         var str = ""
-        for(card in cards) {
+        for (card in cards) {
             str += card.toString()
             str += "\n"
         }

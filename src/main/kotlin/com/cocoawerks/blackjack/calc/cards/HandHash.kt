@@ -10,7 +10,7 @@ fun soft(total: Int): HandHash {
     return HandHash(isSoft = true, isPair = false, total = total)
 }
 
-fun pair(total: Int, aces:Boolean = false): HandHash {
+fun pair(total: Int, aces: Boolean = false): HandHash {
     if (aces) {
         return HandHash(isSoft = true, isPair = true, total = 12)
     }

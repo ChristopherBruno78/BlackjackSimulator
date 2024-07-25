@@ -1,21 +1,19 @@
 package com.cocoawerks.blackjack.calc.strategy
 
-class BetSpread(private val spread:MutableMap<Int, Double>) {
+class BetSpread(private val spread: MutableMap<Int, Double>) {
 
-    fun getBet(index:Int):Double {
-        if(spread.containsKey(index)) {
+    fun getBet(index: Int): Double {
+        if (spread.containsKey(index)) {
             return spread[index]!!
-        }
-        else {
+        } else {
             var i = index
-            while(!spread.containsKey(i)) {
-                if(i > 0) {
+            while (!spread.containsKey(i)) {
+                if (i > 0) {
                     i -= 1
-                }
-                else {
+                } else {
                     i += 1
                 }
-                if(i == 0) {
+                if (i == 0) {
                     break
                 }
             }

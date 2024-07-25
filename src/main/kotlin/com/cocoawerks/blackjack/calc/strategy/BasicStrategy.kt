@@ -3,7 +3,7 @@ package com.cocoawerks.blackjack.calc.strategy
 import com.cocoawerks.blackjack.calc.BlackjackRules
 import com.cocoawerks.blackjack.calc.strategy.tables.BasicStrategy4PlusDecksTable
 
-open class BasicStrategy(val rules:BlackjackRules) : Strategy {
+open class BasicStrategy(val rules: BlackjackRules) : Strategy {
 
     private val playActions: MutableMap<HandState, Action> = HashMap()
 
@@ -28,8 +28,8 @@ open class BasicStrategy(val rules:BlackjackRules) : Strategy {
     }
 
     override fun getNumberOfBettingSpots(): Int {
-       return 1
+        return 1
     }
 
-    override fun reset() {  }
+    override fun reset() {}
 }

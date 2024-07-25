@@ -7,17 +7,13 @@ class SpeedCountStrategy(betSpread: BetSpread, rules: BlackjackRules) : Counting
 
     override fun updateRunningCount(observedCard: Card) {
         val value = observedCard.value()
-        if(value >= 2 && value < 7){
-             _runningCount += 1
-         }
-         numberOfCardsObserved += 1
+        if (value >= 2 && value < 7) {
+            _runningCount += 1
+        }
+        numberOfCardsObserved += 1
     }
 
-    override fun getBet(): Double {
-        return super.getBet()
-    }
-
-    fun subtractNumberOfHands(numHands:Int){
+    fun subtractNumberOfHands(numHands: Int) {
         _runningCount -= numHands
     }
 

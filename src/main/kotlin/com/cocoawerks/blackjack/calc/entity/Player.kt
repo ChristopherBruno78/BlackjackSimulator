@@ -21,8 +21,7 @@ open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
                 hands.add(hand)
                 log(BetPlacedEvent(stats = stats.copy(), wager = wager))
             }
-        }
-        else {
+        } else {
             log(BetPlacedEvent(stats = stats.copy(), wager = 0.0))
         }
         stats.bets.add(wager)
@@ -61,8 +60,8 @@ open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
         return playHand(hand, forGame)
     }
 
-    private fun handleIfBusted(hand: Hand, game:BlackjackGame): Boolean {
-        if(hand.isBusted) {
+    private fun handleIfBusted(hand: Hand, game: BlackjackGame): Boolean {
+        if (hand.isBusted) {
             log(HandBustsEvent(stats = stats.copy()))
             processLoss(hand)
             game.dealer.processWin(hand)
@@ -71,11 +70,13 @@ open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
         return false
     }
 
-    private fun handleIfBlackjack(hand: Hand, game:BlackjackGame): Boolean {
+    private fun handleIfBlackjack(hand: Hand, game: BlackjackGame): Boolean {
         if (hand.isBlackjack) {
             log(HasABlackjackEvent(stats = stats.copy()))
-            processWin(hand, game.rules)
-            game.dealer.processLoss(hand, game.rules)
+            if (!game.rules.europeanNoHoleCard) {
+                processWin(hand, game.rules)
+                game.dealer.processLoss(hand, game.rules)
+            }
             return true
         }
         return false
@@ -91,7 +92,7 @@ open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
     }
 
     private fun playSplit(hand: Hand, forGame: BlackjackGame): Action? {
-        if(!hand.isSplittable) return null
+        if (!hand.isSplittable) return null
         log(PlayActionEvent(stats = stats.copy(), action = Action.Split))
         val splitHands = splitHand(hand, forGame.takeVisibleCardFromDealer(), forGame.takeVisibleCardFromDealer())
         if (splitHands.size == 2) {
@@ -105,16 +106,16 @@ open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
     }
 
     fun observeCard(card: Card?) {
-        if(strategy is CountingStrategy) {
+        if (strategy is CountingStrategy) {
             strategy.updateRunningCount(card!!)
         }
     }
 
-    open fun observeGame(game:BlackjackGame) { }
+    open fun observeGame(game: BlackjackGame) {}
 
-    fun insureHand(hand:Hand) {
+    fun insureHand(hand: Hand) {
         hand.isInsured = true
-        stats.bankroll -= hand.wager/2.0
+        stats.bankroll -= hand.wager / 2.0
     }
 
     override fun playHand(hand: Hand, forGame: BlackjackGame?): Action? {
@@ -126,7 +127,7 @@ open class Player(name: String, strategy: Strategy) : Entity(name, strategy) {
         }
 
         val rules = forGame.rules
-        if(!rules.canPlay(hand)) {
+        if (!rules.canPlay(hand)) {
             log(PlayActionEvent(stats = stats.copy(), action = Action.Stand))
             return Action.Stand
         }

@@ -7,7 +7,7 @@ import com.cocoawerks.blackjack.calc.strategy.Action
 import com.cocoawerks.blackjack.calc.strategy.DealerStrategy
 import com.cocoawerks.blackjack.calc.strategy.HandState
 
-class DealerStrategyTable(val strategy:DealerStrategy) {
+class DealerStrategyTable(val strategy: DealerStrategy) {
 
     init {
         for (total in 5..16) {
@@ -29,12 +29,11 @@ class DealerStrategyTable(val strategy:DealerStrategy) {
         }
 
         //pairs
-        for(total in 4..20) {
-            if(total % 2 == 0){
-                if(total < 17) {
+        for (total in 4..20) {
+            if (total % 2 == 0) {
+                if (total < 17) {
                     strategy.setPlayAction(Action.Hit, HandState(pair(total)))
-                }
-                else {
+                } else {
                     strategy.setPlayAction(Action.Stand, HandState(pair(total)))
                 }
             }

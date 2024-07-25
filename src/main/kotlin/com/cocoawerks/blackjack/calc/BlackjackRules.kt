@@ -16,7 +16,7 @@ data class BlackjackRules(
     var europeanNoHoleCard: Boolean = false
 ) {
 
-    companion object   {
+    companion object {
         fun defaultRules() = BlackjackRules()
     }
 
@@ -31,10 +31,10 @@ data class BlackjackRules(
         }
 
         if (hand.isFromSplitAces && canResplitAces) { //spitting aces
-           return false
+            return false
         }
 
-        if(hand.rootHand.numberOfHands >= splitToThisManyHands) {
+        if (hand.rootHand.numberOfHands >= splitToThisManyHands) {
             return false
         }
         return true
@@ -61,8 +61,8 @@ data class BlackjackRules(
         return true
     }
 
-    fun canPlay(hand:Hand):Boolean {
-       return !(hand.isFromSplitAces && splitAcesReceiveOneCard)
+    fun canPlay(hand: Hand): Boolean {
+        return !(hand.isFromSplitAces && splitAcesReceiveOneCard)
     }
 
 }

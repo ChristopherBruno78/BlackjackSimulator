@@ -77,7 +77,7 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
         for (player in _players) {
             val takeInsurance = player.strategy.willTakeInsurance()
             log(PlayerInsuranceDecisionEvent(player.stats.copy(), takeInsurance))
-            if(takeInsurance) {
+            if (takeInsurance) {
                 for (hand in player.hands) {
                     player.insureHand(hand)
                 }
@@ -95,15 +95,20 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
             for (player in _players) {
                 val hands = player.allHands
                 for (hand in hands) {
-                    if(hand.isInsured) {
+                    if (!rules.europeanNoHoleCard) {
+                        log(HandChangedEvent(stats = player.stats.copy(), hand = hand))
+                    }
+                    if (hand.isInsured) {
                         log(PlayerPaidInsuranceEvent(player.stats.copy()))
-                        player.stats.bankroll += hand.wager
+                        player.stats.bankroll += 1.5 * hand.wager
                     }
                     if (!hand.isBlackjack) {
                         player.processLoss(hand)
                         _dealer.processWin(hand)
                     } else {
-                        log(HasABlackjackEvent(stats = player.stats.copy()))
+                        if (!rules.europeanNoHoleCard) {
+                            log(HasABlackjackEvent(stats = player.stats.copy()))
+                        }
                         player.processPush(hand)
                         _dealer.processPush(hand)
                     }
@@ -112,7 +117,7 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
             return true
         }
 
-        if(_dealer.upCard?.rank == Rank.Ace) {
+        if (_dealer.upCard?.rank == Rank.Ace) {
             log(DealerDoesNotHaveBlackjackEvent())
         }
 
@@ -130,17 +135,21 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
     }
 
     private fun evaluateRound() {
-
+        log(HandChangedEvent(stats = _dealer.stats.copy(), hand = _dealer.dealerHand!!))
         val madeHands = ArrayList<Hand>()
         for (player in _players) {
             val hands = player.allHands
             for (hand in hands) {
-                if(!hand.isBusted && !hand.isBlackjack) {
+                if (hand.isBlackjack && rules.europeanNoHoleCard) {
+                    player.processWin(hand, rules)
+                    dealer.processLoss(hand, rules)
+                }
+                if (!hand.isBusted && !hand.isBlackjack) {
                     madeHands.add(hand)
                 }
             }
         }
-        log(HandChangedEvent(stats = _dealer.stats.copy(), hand = _dealer.dealerHand!!))
+
         if (madeHands.size > 0) {
             revealCard(_dealer.holeCard)
             _dealer.playHand()
@@ -180,19 +189,22 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
         }
     }
 
-    fun playRound() {
+    fun playRound(debug: Boolean = false) {
         clear()
 
-        if (roundsPlayed == 0) {
-            _dealer.shuffle()
-            for(player in _players) {
-                player.strategy.reset()
-            }
-        } else {
-            val shuffle = _dealer.shuffleIfNeeded(rules.deckPenetration)
-            if(shuffle) {
-                for(player in _players) {
+        if (!debug) {
+
+            if (roundsPlayed == 0) {
+                _dealer.shuffle()
+                for (player in _players) {
                     player.strategy.reset()
+                }
+            } else {
+                val shuffle = _dealer.shuffleIfNeeded(rules.deckPenetration)
+                if (shuffle) {
+                    for (player in _players) {
+                        player.strategy.reset()
+                    }
                 }
             }
         }
@@ -208,7 +220,6 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
         } else {
             playHands()
             _dealer.dealerHand?.addCard(dealer.dealCard())
-            log(HandChangedEvent(stats = _dealer.stats.copy(), hand = _dealer.dealerHand!!))
             if (!checkDealerForBlackjack()) {
                 evaluateRound()
             }
@@ -230,7 +241,7 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
         return card
     }
 
-    private fun revealCard(card:Card?) {
+    private fun revealCard(card: Card?) {
         for (player in _players) {
             player.observeCard(card)
         }
