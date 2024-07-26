@@ -234,31 +234,43 @@ class BlackjackCalculatorTests {
     @Test
     fun testCounter() {
         val rules = BlackjackRules()
+//        val betSpread = BetSpread(
+//            hashMapOf(
+//                0 to 1.0,
+//                1 to 2.0,
+//                2 to 3.0,
+//                3 to 6.0,
+//                4 to 12.0,
+//                5 to 18.0,
+//                6 to 30.0,
+//                7 to 36.0,
+//                8 to 50.0
+//            )
+//        )
+
         val betSpread = BetSpread(
             hashMapOf(
                 0 to 1.0,
-                1 to 2.0,
-                2 to 3.0,
-                3 to 6.0,
-                4 to 12.0,
-                5 to 18.0
+                1 to 4.0
+
             )
         )
 
-        val startBank = 1000
         val bankrolls: MutableList<Int> = ArrayList()
         var lostMoneyCount = 0
         for (j in 1..25000) {
             val game = BlackjackGame(rules)
-            val counter = Player(name = "ChrisCounter", strategy = HiLoCountingStrategy(betSpread, rules))
+            val counter = Player(name = "ChrisCounter",
+                strategy = HiLoCountingStrategy(betSpread, rules, illustriousEighteen = true),
+                startingBankroll = 1000.00)
             game.addPlayer(counter)
-            for (i in 1..1500) {
+            for (i in 1..4000) {
                 game.playRound()
-                if (counter.stats.bankroll <= -startBank) {
+                if (counter.stats.bankroll <= 0) {
                     break
                 }
             }
-            if (counter.stats.bankroll <= -startBank) {
+            if (counter.stats.bankroll <= 0.0) {
                 lostMoneyCount += 1
             }
             bankrolls.add(counter.stats.bankroll.toInt())
@@ -277,14 +289,13 @@ class BlackjackCalculatorTests {
             }
         }
         val mean = sum.toDouble() / (bankrolls.size)
-        println("min = $min")
-        println("max = $max")
-        println("sum = ${sum}")
-        println("average = ${mean}")
+        println("min = ${min - 1000}")
+        println("max = ${max - 1000}")
+        println("average = ${mean - 1000.0}")
 
         var ss = 0.0
         for (b in bankrolls) {
-            ss += ((b - mean) * (b - mean))
+            ss += ((b - 1000.0 - mean) * (b - 1000.0 - mean))
         }
 
         val variance = ss / (bankrolls.size - 1)
