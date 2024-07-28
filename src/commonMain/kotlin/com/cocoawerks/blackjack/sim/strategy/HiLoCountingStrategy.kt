@@ -34,4 +34,8 @@ class HiLoCountingStrategy(betSpread: BetSpread, rules: BlackjackRules, private 
         return if(illustriousEighteen) trueCount > 2 else false
     }
 
+    override fun getNumberOfBettingSpots(): Int {
+        return if(trueCount > 3) 2 else 1
+    }
+
 }
