@@ -184,6 +184,10 @@ open class Player(name: String, strategy: Strategy, startingBankroll:Double = 10
             if (hasBankroll(2*hand.wager) && rules.canSplit(hand)) {
                 return playSplit(hand, forGame)
             }
+            else {
+                hand.ignorePair = true
+                return playHand(hand, forGame)
+            }
         }
         log(PlayActionEvent(stats = stats.copy(), action = Action.Stand))
         return Action.Stand

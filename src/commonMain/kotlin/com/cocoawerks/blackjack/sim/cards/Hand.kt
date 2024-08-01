@@ -7,6 +7,7 @@ class Hand(val wager: Double = 0.0) {
 
     var isDouble: Boolean = false
     var isInsured: Boolean = false
+    var ignorePair:Boolean = false
 
     var rootHand: Hand = this //for split hands
     val splits: MutableList<Hand> = ArrayList()
@@ -61,6 +62,9 @@ class Hand(val wager: Double = 0.0) {
 
     val isPair: Boolean
         get() {
+            if(ignorePair) {
+                return false
+            }
             if (numberOfCards == 2) {
                 val card1 = cardAt(0)
                 val card2 = cardAt(1)
