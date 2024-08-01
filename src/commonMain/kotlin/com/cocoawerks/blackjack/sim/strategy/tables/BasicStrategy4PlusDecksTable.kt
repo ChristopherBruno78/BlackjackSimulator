@@ -20,13 +20,13 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 5-8
         for (total in 5..8) {
             Rank.entries.forEach { rank ->
-                strategy.setPlayAction(Action.Hit, HandState(hard(total), upCard = rank))
+                strategy.setPlayAction(Action.Hit, HandState(hard(total), upCard = rank.value()))
             }
         }
 
         // 9
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(9), upCard = rank)
+            val state = HandState(hard(9), upCard = rank.value())
             if (rank.value() > 2 && rank.value() < 7) {
                 strategy.setPlayAction(Action.DoubleOrHit, state)
             } else {
@@ -36,7 +36,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 10
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(10), upCard = rank)
+            val state = HandState(hard(10), upCard = rank.value())
             if (rank.value() == 1 || rank.value() == 10) {
                 strategy.setPlayAction(Action.Hit, state)
             } else {
@@ -46,13 +46,13 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 11
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(11), upCard = rank)
+            val state = HandState(hard(11), upCard = rank.value())
             strategy.setPlayAction(Action.DoubleOrHit, state)
         }
 
         // 12
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(12), upCard = rank)
+            val state = HandState(hard(12), upCard = rank.value())
             if (rank.value() > 3 && rank.value() < 7) {
                 strategy.setPlayAction(Action.Stand, state)
             } else {
@@ -63,7 +63,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 13-14
         for (total in 13..14) {
             Rank.entries.forEach { rank ->
-                val state = HandState(hard(total), upCard = rank)
+                val state = HandState(hard(total), upCard = rank.value())
                 if (rank.value() > 1 && rank.value() < 7) {
                     strategy.setPlayAction(Action.Stand, state)
                 } else {
@@ -74,10 +74,10 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         //15
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(15), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 7) {
+            val state = HandState(hard(15), upCard = rank.value())
+            if (rank.value() in 2..6) {
                 strategy.setPlayAction(Action.Stand, state)
-            } else if ((rank.value() > 6 && rank.value() < 10) || rank.value() == 1) {
+            } else if (rank.value() in 7..9) {
                 strategy.setPlayAction(Action.Hit, state)
             } else {
                 strategy.setPlayAction(Action.SurrenderOrHit, state)
@@ -86,10 +86,10 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         //16
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(16), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 7) {
+            val state = HandState(hard(16), upCard = rank.value())
+            if (rank.value() in 2..6) {
                 strategy.setPlayAction(Action.Stand, state)
-            } else if ((rank.value() > 6 && rank.value() < 9) || rank.value() == 1) {
+            } else if (rank.value() in 7..8) {
                 strategy.setPlayAction(Action.Hit, state)
             } else {
                 strategy.setPlayAction(Action.SurrenderOrHit, state)
@@ -98,7 +98,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         //17
         Rank.entries.forEach { rank ->
-            val state = HandState(hard(17), upCard = rank)
+            val state = HandState(hard(17), upCard = rank.value())
             if (rank.value() == 1) {
                 strategy.setPlayAction(Action.SurrenderOrStand, state)
             } else {
@@ -109,7 +109,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 18-21
         for (total in 18..21) {
             Rank.entries.forEach { rank ->
-                strategy.setPlayAction(Action.Stand, HandState(hard(total), upCard = rank))
+                strategy.setPlayAction(Action.Stand, HandState(hard(total), upCard = rank.value()))
             }
         }
     }
@@ -118,7 +118,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 13-14
         for (total in 13..14) {
             Rank.entries.forEach { rank ->
-                val state = HandState(soft(total), upCard = rank)
+                val state = HandState(soft(total), upCard = rank.value())
                 if (rank.value() < 5 || rank.value() > 6) {
                     strategy.setPlayAction(Action.Hit, state)
                 } else {
@@ -130,7 +130,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 15-16
         for (total in 15..16) {
             Rank.entries.forEach { rank ->
-                val state = HandState(soft(total), upCard = rank)
+                val state = HandState(soft(total), upCard = rank.value())
                 if (rank.value() < 4 || rank.value() > 6) {
                     strategy.setPlayAction(Action.Hit, state)
                 } else {
@@ -141,7 +141,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 17
         Rank.entries.forEach { rank ->
-            val state = HandState(soft(17), upCard = rank)
+            val state = HandState(soft(17), upCard = rank.value())
             if (rank.value() < 3 || rank.value() > 6) {
                 strategy.setPlayAction(Action.Hit, state)
             } else {
@@ -151,7 +151,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 18
         Rank.entries.forEach { rank ->
-            val state = HandState(soft(18), upCard = rank)
+            val state = HandState(soft(18), upCard = rank.value())
             if (rank.value() > 1 && rank.value() < 7) {
                 strategy.setPlayAction(Action.DoubleOrStand, state)
             } else if (rank.value() > 6 && rank.value() < 9) {
@@ -163,7 +163,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 19
         Rank.entries.forEach { rank ->
-            val state = HandState(soft(19), upCard = rank)
+            val state = HandState(soft(19), upCard = rank.value())
             if (rank.value() == 6) {
                 strategy.setPlayAction(Action.DoubleOrStand, state)
             } else {
@@ -174,7 +174,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 20-21
         for (total in 20..21) {
             Rank.entries.forEach { rank ->
-                strategy.setPlayAction(Action.Stand, HandState(soft(total), upCard = rank))
+                strategy.setPlayAction(Action.Stand, HandState(soft(total), upCard = rank.value()))
             }
         }
     }
@@ -183,12 +183,12 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 2/12 (A-A)
         Rank.entries.forEach { rank ->
-            strategy.setPlayAction(Action.Split, HandState(pair(12, aces = true), upCard = rank))
+            strategy.setPlayAction(Action.Split, HandState(pair(12, aces = true), upCard = rank.value()))
         }
 
         // 4
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(4), upCard = rank)
+            val state = HandState(pair(4), upCard = rank.value())
             if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
             }
@@ -202,7 +202,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 6
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(6), upCard = rank)
+            val state = HandState(pair(6), upCard = rank.value())
             if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
             }
@@ -216,7 +216,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 8
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(8), upCard = rank)
+            val state = HandState(pair(8), upCard = rank.value())
             if (rank.value() in 5..6) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
             } else {
@@ -226,7 +226,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 10
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(10), upCard = rank)
+            val state = HandState(pair(10), upCard = rank.value())
             if (rank.value() in 2..9) {
                 strategy.setPlayAction(Action.DoubleOrHit, state)
             } else {
@@ -236,7 +236,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 12
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(12), upCard = rank)
+            val state = HandState(pair(12), upCard = rank.value())
             if (rank.value() in 3..6) {
                 strategy.setPlayAction(Action.Split, state)
             } else if (rank.value() == 2) {
@@ -250,7 +250,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 14
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(14), upCard = rank)
+            val state = HandState(pair(14), upCard = rank.value())
             if (rank.value() in 2..7) {
                 strategy.setPlayAction(Action.Split, state)
             } else {
@@ -261,15 +261,15 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 16
         Rank.entries.forEach { rank ->
             if (rank == Rank.Ace) {
-                strategy.setPlayAction(Action.SurrenderOrSplit, HandState(pair(16), upCard = rank))
+                strategy.setPlayAction(Action.SurrenderOrSplit, HandState(pair(16), upCard = rank.value()))
             } else {
-                strategy.setPlayAction(Action.Split, HandState(pair(16), upCard = rank))
+                strategy.setPlayAction(Action.Split, HandState(pair(16), upCard = rank.value()))
             }
         }
 
         // 18
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(18), upCard = rank)
+            val state = HandState(pair(18), upCard = rank.value())
             if (rank.value() == 1 || rank.value() == 7 || rank.value() == 10) {
                 strategy.setPlayAction(Action.Stand, state)
             } else {
@@ -279,7 +279,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 20
         Rank.entries.forEach { rank ->
-            strategy.setPlayAction(Action.Stand, HandState(pair(20), upCard = rank))
+            strategy.setPlayAction(Action.Stand, HandState(pair(20), upCard = rank.value()))
         }
     }
 

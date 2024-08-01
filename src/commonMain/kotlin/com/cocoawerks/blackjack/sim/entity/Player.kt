@@ -141,7 +141,7 @@ open class Player(name: String, strategy: Strategy, startingBankroll:Double = 10
             return Action.Stand
         }
 
-        val action = makeDecision(HandState(hand.hash, upCard = forGame.dealer.upCard?.rank))
+        val action = makeDecision(HandState(hand.hash, upCard = forGame.dealer.upCard?.value()))
         if (action == Action.SurrenderOrHit) {
             if (rules.canSurrender(hand)) {
                 processSurrender(hand)
