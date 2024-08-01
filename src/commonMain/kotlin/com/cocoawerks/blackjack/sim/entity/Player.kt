@@ -180,7 +180,7 @@ open class Player(name: String, strategy: Strategy, startingBankroll:Double = 10
             } else {
                 return playHit(hand, forGame)
             }
-        } else if (action == Action.SplitOrStand) {
+        } else if (action == Action.Split) {
             if (hasBankroll(2*hand.wager) && rules.canSplit(hand)) {
                 return playSplit(hand, forGame)
             }

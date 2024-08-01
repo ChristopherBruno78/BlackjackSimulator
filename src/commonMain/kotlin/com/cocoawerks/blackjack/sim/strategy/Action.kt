@@ -3,7 +3,7 @@ package com.cocoawerks.blackjack.sim.strategy
 enum class Action {
     Hit,
     Stand,
-    SplitOrStand,
+    Split,
     SplitOrHit,
     DoubleOrStand,
     DoubleOrHit,
@@ -13,6 +13,5 @@ enum class Action {
 
     // not to be used in strategy setting
     Double,
-    Split,
     Surrender,
 }
