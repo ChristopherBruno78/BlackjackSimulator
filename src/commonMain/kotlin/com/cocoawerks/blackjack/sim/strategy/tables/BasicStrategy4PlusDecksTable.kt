@@ -194,7 +194,6 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
             }
             else if (rank.value() in 4..7) {
                 strategy.setPlayAction(Action.Split, state)
-
             }
             else {
                 strategy.setPlayAction(Action.Hit, state)
@@ -203,7 +202,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 6
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(4), upCard = rank)
+            val state = HandState(pair(6), upCard = rank)
             if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
             }
