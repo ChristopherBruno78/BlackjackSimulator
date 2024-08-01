@@ -18,8 +18,28 @@ dependencies {
 //    useJUnitPlatform()
 //}
 kotlin {
-    jvmToolchain(17)
-    iosArm64()
+    jvm()
+    macosArm64() {
+        binaries {
+            executable {
+                baseName = "BlackjackSim"
+            }
+        }
+    }
+    iosSimulatorArm64() {
+        binaries {
+            framework {
+                baseName = "BlackjackSim"
+            }
+        }
+    }
+    iosArm64() {
+        binaries {
+            framework {
+                baseName = "BlackjackSim"
+            }
+        }
+    }
     js(IR) {
         moduleName = "blackjack_sim"
         browser {

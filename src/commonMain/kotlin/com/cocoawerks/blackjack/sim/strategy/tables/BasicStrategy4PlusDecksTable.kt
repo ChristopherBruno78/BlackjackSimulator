@@ -183,25 +183,34 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
 
         // 2/12 (A-A)
         Rank.entries.forEach { rank ->
-            strategy.setPlayAction(Action.SplitOrHit, HandState(pair(12, aces = true), upCard = rank))
+            strategy.setPlayAction(Action.Split, HandState(pair(12, aces = true), upCard = rank))
         }
 
         // 4
         Rank.entries.forEach { rank ->
             val state = HandState(pair(4), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 8) {
+            if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
-            } else {
+            }
+            else if (rank.value() in 4..7) {
+                strategy.setPlayAction(Action.Split, state)
+
+            }
+            else {
                 strategy.setPlayAction(Action.Hit, state)
             }
         }
 
         // 6
         Rank.entries.forEach { rank ->
-            val state = HandState(pair(6), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 8) {
+            val state = HandState(pair(4), upCard = rank)
+            if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
-            } else {
+            }
+            else if (rank.value() in 4..7) {
+                strategy.setPlayAction(Action.Split, state)
+            }
+            else {
                 strategy.setPlayAction(Action.Hit, state)
             }
         }
@@ -209,7 +218,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 8
         Rank.entries.forEach { rank ->
             val state = HandState(pair(8), upCard = rank)
-            if (rank.value() > 4 && rank.value() < 7) {
+            if (rank.value() in 5..6) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
             } else {
                 strategy.setPlayAction(Action.Hit, state)
@@ -219,7 +228,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 10
         Rank.entries.forEach { rank ->
             val state = HandState(pair(10), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 10) {
+            if (rank.value() in 2..9) {
                 strategy.setPlayAction(Action.DoubleOrHit, state)
             } else {
                 strategy.setPlayAction(Action.Hit, state)
@@ -229,18 +238,22 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
         // 12
         Rank.entries.forEach { rank ->
             val state = HandState(pair(12), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 7) {
+            if (rank.value() in 3..6) {
+                strategy.setPlayAction(Action.Split, state)
+            } else if (rank.value() == 2) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
-            } else {
+            }
+            else {
                 strategy.setPlayAction(Action.Hit, state)
             }
+
         }
 
         // 14
         Rank.entries.forEach { rank ->
             val state = HandState(pair(14), upCard = rank)
-            if (rank.value() > 1 && rank.value() < 8) {
-                strategy.setPlayAction(Action.SplitOrHit, state)
+            if (rank.value() in 2..7) {
+                strategy.setPlayAction(Action.Split, state)
             } else {
                 strategy.setPlayAction(Action.Hit, state)
             }
@@ -251,7 +264,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
             if (rank == Rank.Ace) {
                 strategy.setPlayAction(Action.SurrenderOrSplit, HandState(pair(16), upCard = rank))
             } else {
-                strategy.setPlayAction(Action.SplitOrHit, HandState(pair(16), upCard = rank))
+                strategy.setPlayAction(Action.Split, HandState(pair(16), upCard = rank))
             }
         }
 
@@ -261,7 +274,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
             if (rank.value() == 1 || rank.value() == 7 || rank.value() == 10) {
                 strategy.setPlayAction(Action.Stand, state)
             } else {
-                strategy.setPlayAction(Action.SplitOrHit, state)
+                strategy.setPlayAction(Action.Split, state)
             }
         }
 

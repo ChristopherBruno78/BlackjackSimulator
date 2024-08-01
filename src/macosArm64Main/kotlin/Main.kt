@@ -3,8 +3,8 @@ import com.cocoawerks.blackjack.sim.BlackjackRules
 import com.cocoawerks.blackjack.sim.entity.Player
 import com.cocoawerks.blackjack.sim.strategy.BasicStrategy
 
+fun main() {
 
-fun main(args: Array<String>) {
     val rules = BlackjackRules()
 
     val game = BlackjackGame(rules)
@@ -14,5 +14,4 @@ fun main(args: Array<String>) {
 
     game.playRound()
     game.printLog()
-
 }
