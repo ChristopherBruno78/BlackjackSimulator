@@ -1,5 +1,8 @@
 package com.cocoawerks.blackjack.sim.strategy
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class Action {
     Hit,
     Stand,

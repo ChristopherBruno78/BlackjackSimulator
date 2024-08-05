@@ -1,6 +1,7 @@
 plugins {
-   // kotlin("jvm") version "2.0.0"
+    `java-library`
     kotlin("multiplatform") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
 }
 
 group = "org.cocoawerks"
@@ -11,12 +12,9 @@ repositories {
 }
 
 dependencies {
-    //testImplementation(kotlin("test"))
+    implementation(kotlin("stdlib-jdk8"))
 }
 
-//tasks.test {
-//    useJUnitPlatform()
-//}
 kotlin {
     jvm()
     macosArm64() {
@@ -55,5 +53,17 @@ kotlin {
         }
         binaries.executable()
     }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+            }
+        }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+    }
+    jvmToolchain(17)
 }
 

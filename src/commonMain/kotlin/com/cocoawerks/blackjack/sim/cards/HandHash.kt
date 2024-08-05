@@ -1,5 +1,8 @@
 package com.cocoawerks.blackjack.sim.cards
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class HandHash(val isSoft: Boolean, val isPair: Boolean, val total: Int)
 
 fun hard(total: Int): HandHash {

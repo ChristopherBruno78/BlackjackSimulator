@@ -2,6 +2,8 @@ package com.cocoawerks.blackjack.sim.strategy
 
 import com.cocoawerks.blackjack.sim.BlackjackRules
 import com.cocoawerks.blackjack.sim.strategy.tables.BasicStrategy4PlusDecksTable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 open class BasicStrategy(val rules: BlackjackRules) : Strategy {
 
@@ -32,4 +34,8 @@ open class BasicStrategy(val rules: BlackjackRules) : Strategy {
     }
 
     override fun reset() {}
+
+    fun toJson() : String {
+        return Json.encodeToString(playActions)
+    }
 }
