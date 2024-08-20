@@ -1,9 +1,9 @@
-package com.cocoawerks.blackjack.sim.entity
+package com.cocoawerks.blackjack.sim.applications.speedcount
 
 import com.cocoawerks.blackjack.sim.BlackjackGame
 import com.cocoawerks.blackjack.sim.BlackjackRules
 import com.cocoawerks.blackjack.sim.strategy.BetSpread
-import com.cocoawerks.blackjack.sim.strategy.SpeedCountStrategy
+import com.cocoawerks.blackjack.sim.entity.Player
 
 class SpeedCountPlayer(name: String, betSpread: BetSpread, rules: BlackjackRules) :
     Player(name, strategy = SpeedCountStrategy(betSpread, rules)) {

@@ -5,10 +5,10 @@ import com.cocoawerks.blackjack.sim.cards.hard
 import com.cocoawerks.blackjack.sim.cards.pair
 import com.cocoawerks.blackjack.sim.cards.soft
 import com.cocoawerks.blackjack.sim.strategy.Action
+import com.cocoawerks.blackjack.sim.strategy.BasicStrategy
 import com.cocoawerks.blackjack.sim.strategy.HandState
-import com.cocoawerks.blackjack.sim.strategy.Strategy
 
-internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
+internal class BasicStrategy4PlusDecksTable(val strategy: BasicStrategy) {
 
     init {
         initHardTotals()
@@ -191,11 +191,9 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
             val state = HandState(pair(4), upCard = rank.value())
             if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
-            }
-            else if (rank.value() in 4..7) {
+            } else if (rank.value() in 4..7) {
                 strategy.setPlayAction(Action.Split, state)
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.Hit, state)
             }
         }
@@ -205,11 +203,9 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
             val state = HandState(pair(6), upCard = rank.value())
             if (rank.value() in 2..3) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
-            }
-            else if (rank.value() in 4..7) {
+            } else if (rank.value() in 4..7) {
                 strategy.setPlayAction(Action.Split, state)
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.Hit, state)
             }
         }
@@ -241,8 +237,7 @@ internal class BasicStrategy4PlusDecksTable(val strategy: Strategy) {
                 strategy.setPlayAction(Action.Split, state)
             } else if (rank.value() == 2) {
                 strategy.setPlayAction(Action.SplitOrHit, state)
-            }
-            else {
+            } else {
                 strategy.setPlayAction(Action.Hit, state)
             }
 

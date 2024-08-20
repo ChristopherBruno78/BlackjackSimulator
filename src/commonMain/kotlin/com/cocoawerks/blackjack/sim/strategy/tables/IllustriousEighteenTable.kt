@@ -4,10 +4,10 @@ import com.cocoawerks.blackjack.sim.cards.hard
 import com.cocoawerks.blackjack.sim.cards.pair
 import com.cocoawerks.blackjack.sim.cards.soft
 import com.cocoawerks.blackjack.sim.strategy.Action
-import com.cocoawerks.blackjack.sim.strategy.CountingStrategy
+import com.cocoawerks.blackjack.sim.strategy.BasicStrategy
 import com.cocoawerks.blackjack.sim.strategy.HandState
 
-class IllustriousEighteenTable(strategy: CountingStrategy) {
+class IllustriousEighteenTable(strategy: BasicStrategy) {
 
     init {
         strategy.setDeviation(Action.Stand, HandState(hard(16), upCard = 10), atIndex = 1)

@@ -2,18 +2,25 @@ package com.cocoawerks.blackjack.sim.strategy
 
 import com.cocoawerks.blackjack.sim.BlackjackRules
 import com.cocoawerks.blackjack.sim.strategy.tables.BasicStrategy4PlusDecksTable
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+@Serializable
 open class BasicStrategy(val rules: BlackjackRules) : Strategy {
 
     private val playActions: MutableMap<HandState, Action> = HashMap()
+    internal val deviationIndexes: MutableMap<Int, MutableMap<HandState, Action>> = HashMap()
 
     init {
+        initializeFromTable()
+    }
+
+    private fun initializeFromTable() {
         BasicStrategy4PlusDecksTable(this)
     }
 
-    override fun setPlayAction(action: Action, forState: HandState) {
+    fun setPlayAction(action: Action, forState: HandState) {
         playActions[forState] = action
     }
 
@@ -35,7 +42,26 @@ open class BasicStrategy(val rules: BlackjackRules) : Strategy {
 
     override fun reset() {}
 
-    fun toJson() : String {
-        return Json.encodeToString(playActions)
+    fun setDeviation(action: Action, forState: HandState, atIndex: Int) {
+        if (!deviationIndexes.containsKey(atIndex)) {
+            deviationIndexes[atIndex] = HashMap()
+        }
+        val deviation = deviationIndexes[atIndex]!!
+        deviation[forState] = action
     }
+
+    fun toJson(): String {
+        val json = Json {
+            allowStructuredMapKeys = true
+        }
+        return json.encodeToString(this)
+    }
+}
+
+fun strategyFromJsonString(jsonStr: String): BasicStrategy {
+    val json = Json {
+        allowStructuredMapKeys = true
+    }
+    val strategy = json.decodeFromString<BasicStrategy>(jsonStr)
+    return strategy
 }

@@ -10,7 +10,7 @@ import com.cocoawerks.blackjack.sim.strategy.HandState
 import com.cocoawerks.blackjack.sim.strategy.Strategy
 import kotlin.math.min
 
-open class Player(name: String, strategy: Strategy, startingBankroll:Double = 1000.0) : Entity(name, strategy) {
+open class Player(name: String, strategy: Strategy, startingBankroll: Double = 1000.0) : Entity(name, strategy) {
 
     init {
         stats.bankroll = startingBankroll
@@ -123,7 +123,7 @@ open class Player(name: String, strategy: Strategy, startingBankroll:Double = 10
     /**
      * Does the player have the funds to make the bet
      */
-    private fun hasBankroll(amount:Double):Boolean {
+    private fun hasBankroll(amount: Double): Boolean {
         return amount <= stats.bankroll
     }
 
@@ -165,26 +165,25 @@ open class Player(name: String, strategy: Strategy, startingBankroll:Double = 10
         } else if (action == Action.Hit) {
             return playHit(hand, forGame)
         } else if (action == Action.DoubleOrHit) {
-            if (hasBankroll(2*hand.wager) && rules.canDouble(hand)) {
+            if (hasBankroll(2 * hand.wager) && rules.canDouble(hand)) {
                 return playDouble(hand, forGame)
             } else {
                 return playHit(hand, forGame)
             }
         } else if (action == Action.DoubleOrStand) {
-            if (hasBankroll(2*hand.wager) && rules.canDouble(hand)) {
+            if (hasBankroll(2 * hand.wager) && rules.canDouble(hand)) {
                 return playDouble(hand, forGame)
             }
         } else if (action == Action.SplitOrHit) {
-            if (hasBankroll(2*hand.wager) && rules.canSplit(hand) && rules.canDoubleAfterSplit) {
+            if (hasBankroll(2 * hand.wager) && rules.canSplit(hand) && rules.canDoubleAfterSplit) {
                 return playSplit(hand, forGame)
             } else {
                 return playHit(hand, forGame)
             }
         } else if (action == Action.Split) {
-            if (hasBankroll(2*hand.wager) && rules.canSplit(hand)) {
+            if (hasBankroll(2 * hand.wager) && rules.canSplit(hand)) {
                 return playSplit(hand, forGame)
-            }
-            else {
+            } else {
                 hand.ignorePair = true
                 return playHand(hand, forGame)
             }

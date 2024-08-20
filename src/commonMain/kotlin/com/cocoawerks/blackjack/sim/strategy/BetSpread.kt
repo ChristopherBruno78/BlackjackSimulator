@@ -1,6 +1,9 @@
 package com.cocoawerks.blackjack.sim.strategy
 
-class BetSpread(private val spread:Map<Int, Double>) {
+import kotlinx.serialization.Serializable
+
+@Serializable
+class BetSpread(private val spread: Map<Int, Double>) {
 
     fun getBet(index: Int): Double {
         if (spread.containsKey(index)) {

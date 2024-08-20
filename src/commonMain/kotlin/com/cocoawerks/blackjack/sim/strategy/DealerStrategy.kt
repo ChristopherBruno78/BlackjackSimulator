@@ -15,7 +15,7 @@ class DealerStrategy(val rules: BlackjackRules) : Strategy {
         return playActions[state]!!
     }
 
-    override fun setPlayAction(action: Action, forState: HandState) {
+    fun setPlayAction(action: Action, forState: HandState) {
         playActions[forState] = action
     }
 

@@ -3,14 +3,12 @@ import com.cocoawerks.blackjack.sim.BlackjackRules
 import com.cocoawerks.blackjack.sim.cards.*
 import com.cocoawerks.blackjack.sim.entity.Dealer
 import com.cocoawerks.blackjack.sim.entity.Player
-import com.cocoawerks.blackjack.sim.entity.SpeedCountPlayer
+import com.cocoawerks.blackjack.sim.applications.speedcount.SpeedCountPlayer
 import com.cocoawerks.blackjack.sim.strategy.*
-import com.cocoawerks.blackjack.sim.cards.Card
-import com.cocoawerks.blackjack.sim.cards.Hand
-import com.cocoawerks.blackjack.sim.cards.Rank
-import com.cocoawerks.blackjack.sim.cards.Suit
+import com.cocoawerks.blackjack.sim.strategy.tables.IllustriousEighteenTable
 import kotlin.math.sqrt
 import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 
@@ -58,8 +56,8 @@ class BlackjackCalculatorTests {
         hand.addCard(deck.drawCard())
 
         println(hand)
-        assertTrue(deck.numberOfCardsRemaining == 52 * deck.numberOfDecks - 2)
-        assertTrue(deck.pen == (1.0 - (52 * deck.numberOfDecks - 2) / (52.0 * deck.numberOfDecks)))
+        assertEquals(deck.numberOfCardsRemaining, 52 * deck.numberOfDecks - 2)
+        assertEquals(deck.pen, (1.0 - (52 * deck.numberOfDecks - 2) / (52.0 * deck.numberOfDecks)))
     }
 
 
@@ -91,7 +89,7 @@ class BlackjackCalculatorTests {
 
         val a = player.strategy.getPlayAction(HandState(hand2.hash, upCard = 4))
 
-        assertTrue(a == Action.DoubleOrHit)
+        assertEquals(a, Action.DoubleOrHit)
 
     }
 
@@ -115,7 +113,8 @@ class BlackjackCalculatorTests {
             )
         )
 
-        val counter = Player(name = "Counter", strategy = HiLoCountingStrategy(betSpread, rules))
+        val counter = Player(name = "Counter",
+            strategy = CountingStrategy(betSpread, HiLoIndex(), BasicStrategy(rules)))
         game.addPlayer(counter)
 
         for (i in 1..1) {
@@ -136,7 +135,7 @@ class BlackjackCalculatorTests {
         hand.addCard(Card(Suit.Spade, Rank.Eight))
         hand.addCard(Card(Suit.Heart, Rank.Three))
 
-        assertTrue(rules.canDouble(hand) == true)
+        assertTrue(rules.canDouble(hand))
 
         val player2 = Player(name = "Steve", strategy = BasicStrategy(BlackjackRules()))
 
@@ -150,9 +149,9 @@ class BlackjackCalculatorTests {
 
         val subHand2 = hand2.splits[0]
 
-        assertTrue(rules.canDouble(subHand2) == true)
+        assertTrue(rules.canDouble(subHand2))
         rules.canDoubleAfterSplit = false
-        assertTrue(rules.canDouble(subHand2) == false)
+        assertTrue(!rules.canDouble(subHand2))
 
         val player3 = Player(name = "Scott", strategy = BasicStrategy(BlackjackRules()))
         player3.bet()
@@ -162,7 +161,7 @@ class BlackjackCalculatorTests {
 
         rules.doublesRestrictedToHardTotals = arrayOf(9, 10, 11)
 
-        assertTrue(rules.canDouble(hand3) == false)
+        assertTrue(!rules.canDouble(hand3))
 
         val player4 = Player(name = "Sam", strategy = BasicStrategy(BlackjackRules()))
 
@@ -172,7 +171,7 @@ class BlackjackCalculatorTests {
         hand4.addCard(Card(Suit.Spade, Rank.Five))
         hand4.addCard(Card(Suit.Heart, Rank.Six))
 
-        assertTrue(rules.canDouble(hand4) == true)
+        assertTrue(rules.canDouble(hand4))
 
     }
 
@@ -190,14 +189,14 @@ class BlackjackCalculatorTests {
         hand.addCard(Card(Suit.Spade, Rank.Ace))
         hand.addCard(Card(Suit.Heart, Rank.Ace))
 
-        assertTrue(rules.canSplit(hand) == true)
+        assertTrue(rules.canSplit(hand))
 
         player.splitHand(hand, dealer.dealCard(), dealer.dealCard())
 
         assertTrue(hand.numberOfHands == 2)
 
-        assertTrue(rules.canSplit(hand.splits[0]) == false)
-        assertTrue(rules.canPlay(hand.splits[0]) == false)
+        assertTrue(!rules.canSplit(hand.splits[0]))
+        assertTrue(!rules.canPlay(hand.splits[0]))
 
         val player2 = Player(name = "Steve", strategy = BasicStrategy(BlackjackRules()))
         player2.bet()
@@ -215,15 +214,15 @@ class BlackjackCalculatorTests {
         val subHand2 = hand2.splits[0]
         val sub2Hand2 = hand2.splits[1]
 
-        assertTrue(rules.canSplit(subHand2) == true)
-        assertTrue(rules.canSplit(sub2Hand2) == true)
+        assertTrue(rules.canSplit(subHand2))
+        assertTrue(rules.canSplit(sub2Hand2))
 
         player2.splitHand(subHand2, Card(Suit.Diamond, Rank.Eight), Card(Suit.Heart, Rank.Eight))
 
         assertTrue(hand2.numberOfHands == 3)
 
         val sub3Hand2 = subHand2.splits[0]
-        assertTrue(rules.canSplit(sub3Hand2) == true)
+        assertTrue(rules.canSplit(sub3Hand2))
 
         player2.splitHand(sub3Hand2, Card(Suit.Spade, Rank.Eight), Card(Suit.Diamond, Rank.Eight))
 
@@ -233,7 +232,7 @@ class BlackjackCalculatorTests {
 
         val sub4Hand2 = sub3Hand2.splits[0]
 
-        assertTrue(rules.canSplit(sub4Hand2) == false)
+        assertTrue(!rules.canSplit(sub4Hand2))
     }
 
     @Test
@@ -257,7 +256,6 @@ class BlackjackCalculatorTests {
             hashMapOf(
                 0 to 1.0,
                 1 to 4.0
-
             )
         )
 
@@ -265,9 +263,11 @@ class BlackjackCalculatorTests {
         var lostMoneyCount = 0
         for (j in 1..25000) {
             val game = BlackjackGame(rules)
-            val counter = Player(name = "ChrisCounter",
-                strategy = HiLoCountingStrategy(betSpread, rules, illustriousEighteen = true),
-                startingBankroll = 1000.00)
+            val counter = Player(
+                name = "ChrisCounter",
+                strategy = CountingStrategy(betSpread, HiLoIndex(), BasicStrategy(rules)),
+                startingBankroll = 1000.00
+            )
             game.addPlayer(counter)
             for (i in 1..4000) {
                 game.playRound()
@@ -372,6 +372,21 @@ class BlackjackCalculatorTests {
     }
 
     @Test
+    fun testStrategySerialization() {
+        val rules = BlackjackRules()
+        val strategy = BasicStrategy(rules)
+        val jsonStr = strategy.toJson()
+        //println(jsonStr)
+
+        val strategy2 = strategyFromJsonString(jsonStr)
+
+        val action = strategy2.getPlayAction(HandState(hard(16), upCard = 10))
+
+        assertEquals(action, Action.SurrenderOrHit)
+    }
+
+
+    @Test
     fun testDeviations() {
         val rules = BlackjackRules()
 
@@ -389,7 +404,11 @@ class BlackjackCalculatorTests {
             )
         )
 
-        val player = Player("Chris", strategy = HiLoCountingStrategy(betSpread, rules))
+        val basicStrategy = BasicStrategy(rules)
+        IllustriousEighteenTable(basicStrategy)
+
+        val player = Player("Chris",
+            strategy = CountingStrategy(betSpread, HiLoIndex(), basicStrategy ))
         game.addPlayer(player)
 
         game.dealer.deck.stackWithCards(
@@ -438,7 +457,7 @@ class BlackjackCalculatorTests {
         game.dealer.deck.stackWithCards(
             Card(Suit.Club, Rank.King),
             Card(Suit.Diamond, Rank.Ace),
-            Card(Suit.Heart, Rank.Ace),
+            Card(Suit.Heart, Rank.Five),
             Card(Suit.Heart, Rank.Five),
             Card(Suit.Heart, Rank.King),
             Card(Suit.Heart, Rank.Two),
@@ -452,10 +471,8 @@ class BlackjackCalculatorTests {
             Card(Suit.Spade, Rank.Ace),
             Card(Suit.Heart, Rank.Two)
         )
-
         game.playRound(true)
         game.printLog()
-
     }
 
 

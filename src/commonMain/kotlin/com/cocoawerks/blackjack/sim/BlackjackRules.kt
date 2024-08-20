@@ -1,7 +1,9 @@
 package com.cocoawerks.blackjack.sim
 
 import com.cocoawerks.blackjack.sim.cards.Hand
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class BlackjackRules(
     var numberOfDecks: Int = 6,
     var dealerHitsSoft17: Boolean = true,

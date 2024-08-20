@@ -1,7 +1,7 @@
 package com.cocoawerks.blackjack.sim.log
 
 class Round(val index: Int) : Loggable {
-    val events: MutableList<Loggable> = ArrayList()
+    private val events: MutableList<Loggable> = ArrayList()
 
     init {
         events.add(NewRoundEvent(index))

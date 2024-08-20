@@ -12,8 +12,8 @@ class BlackjackGame(val rules: BlackjackRules, log: Boolean = true) {
     private var _players: MutableList<Player> = ArrayList()
     private val _dealer: Dealer = Dealer(this)
 
-    var logger: Logger? = null
-    var roundsPlayed: Int = 0
+    private var logger: Logger? = null
+    private var roundsPlayed: Int = 0
 
     init {
         if (log) {

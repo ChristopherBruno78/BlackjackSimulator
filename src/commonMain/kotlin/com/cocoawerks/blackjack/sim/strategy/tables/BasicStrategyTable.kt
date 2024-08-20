@@ -1,4 +1,3 @@
 package com.cocoawerks.blackjack.sim.strategy.tables
 
-class BasicStrategyTable {
-}
+class BasicStrategyTable
